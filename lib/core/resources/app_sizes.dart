@@ -11,8 +11,10 @@ class AppHeight {
   static double h28 = 28.0.h;
   static double h30 = 30.0.h;
   static double h40 = 40.0.h;
+  static double h58 = 58.0.h;
   static double h70 = 70.0.h;
   static double h130 = 130.0.h;
+  static double h150 = 150.0.h;
 }
 
 class AppWidth {
@@ -21,8 +23,10 @@ class AppWidth {
 }
 
 class AppPadding {
-  static double p8 = 8.0.w;
-  static double p10 = 10.0.w;
+  static double pw8 = 8.0.w;
+  static double ph8 = 8.0.h;
+  static double pw10 = 10.0.w;
+  static double ph10 = 10.0.h;
   static double pw18 = 18.0.w;
 }
 
@@ -39,6 +43,7 @@ class AppFontSize {
   static double f14 = 14.0.sp;
   static double f16 = 16.0.sp;
   static double f18 = 18.0.sp;
+  static double f20 = 20.0.sp;
   static double f38 = 38.0.sp;
   static double f50 = 50.0.sp;
 }

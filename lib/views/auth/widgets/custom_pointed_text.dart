@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
@@ -11,17 +10,29 @@ class CustomPointedText extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(Icons.circle, size: AppFontSize.f8, color: AppColors.green),
-        Gap(AppWidth.w5),
-        CustomText(
-          text: text,
-          fontSize: AppFontSize.f10,
-          fontFamily: AppFonts.poppins,
-          color: AppColors.red,
-        ),
-      ],
+    return RichText(
+      textAlign: TextAlign.start,
+      text: TextSpan(
+        children: [
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Icon(
+              Icons.circle,
+              size: AppFontSize.f8,
+              color: AppColors.green,
+            ),
+          ),
+          WidgetSpan(child: SizedBox(width: AppWidth.w5)),
+          WidgetSpan(
+            child: CustomText(
+              text: text,
+              fontSize: AppFontSize.f10,
+              fontFamily: AppFonts.poppins,
+              color: AppColors.red,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

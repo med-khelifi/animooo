@@ -6,8 +6,8 @@ import 'package:animooo/core/widgets/custom_button.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:animooo/core/widgets/named_app_logo.dart';
 import 'package:animooo/views/auth/widgets/custom_clickable_text.dart';
-import 'package:animooo/views/auth/widgets/custom_pointed_text.dart';
 import 'package:animooo/views/auth/widgets/custom_text_form_field.dart';
+import 'package:animooo/views/auth/widgets/password_rules_list.dart';
 import 'package:animooo/views/auth/widgets/select_image_box.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -22,11 +22,12 @@ class SignupView extends StatelessWidget {
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: AppPadding.p10),
+            padding: EdgeInsets.symmetric(horizontal: AppPadding.pw10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                NamedAppLogo(), Gap(AppHeight.h30),
+                NamedAppLogo(),
+                Gap(AppHeight.h30),
                 CustomText(
                   text: AppStrings.signup,
                   fontSize: AppFontSize.f38,
@@ -60,22 +61,7 @@ class SignupView extends StatelessWidget {
                   isPassword: true,
                 ),
                 Gap(AppHeight.h8),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: CustomText(
-                    text: AppStrings.pleaseAddAllNecessaryCharacters,
-                    fontFamily: AppFonts.poppins,
-                    fontSize: AppFontSize.f10,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.red,
-                  ),
-                ),
-                Gap(AppHeight.h10),
-                CustomPointedText(text: AppStrings.minimumCharacter12),
-                CustomPointedText(text: AppStrings.oneUppercaseCharacter),
-                CustomPointedText(text: AppStrings.oneLowercaseCharacter),
-                CustomPointedText(text: AppStrings.oneSpecialCharacter),
-                CustomPointedText(text: AppStrings.oneNumber),
+                PasswordRulesList(),
                 Gap(AppHeight.h16),
                 CustomTextFormField(
                   label: AppStrings.confirmPassword,
@@ -101,7 +87,9 @@ class SignupView extends StatelessWidget {
                 CustomClickableText(
                   text: AppStrings.haveAnAccountAlready,
                   clickableText: AppStrings.login,
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
                 Gap(AppHeight.h20),
               ],
@@ -112,4 +100,3 @@ class SignupView extends StatelessWidget {
     );
   }
 }
-
