@@ -1,5 +1,7 @@
+import 'package:animooo/views/auth/create_new_password_view.dart';
 import 'package:animooo/views/auth/forget_password_view.dart';
 import 'package:animooo/views/auth/login_view.dart';
+import 'package:animooo/views/auth/otp_verification_view.dart';
 import 'package:animooo/views/auth/signup_view.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,8 @@ class AppRoutes {
       RoutesNames.login: (context) => const LoginView(),
       RoutesNames.signup: (context) => const SignupView(),
       RoutesNames.forgetPassword: (context) => const ForgetPasswordView(),
+      RoutesNames.createNewPassword: (context) => const CreateNewPasswordView(),
+      RoutesNames.otpVerification: (context) => const OtpVerificationView(),
     };
   }
 }
@@ -17,4 +21,6 @@ class RoutesNames {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String forgetPassword = '/forgetPassword';
+  static const String createNewPassword = '/createNewPassword';
+  static const String otpVerification = '/otpVerification';
 }

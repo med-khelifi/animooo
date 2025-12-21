@@ -8,6 +8,7 @@ class AppStrings {
   static const String phone = "Phone";
   static const String password = "Password";
   static const String confirmPassword = "Confirm Password";
+  static const String confirm = "Confirm";
   static const String firstName = "First Name";
   static const String lastName = "Last Name";
   static const String enterYourFirstName = "Please Enter your First Name";
@@ -28,4 +29,17 @@ class AppStrings {
   static const String oneNumber = "One number.";
   static const String signupNow = "Sign up now";
   static const String selectFile = "Select file";
+  static const String back = "Back";
+  static const String sendCode = "Send Code";
+  static const String forgetPasswordDes =
+      "Please enter the email address associated with your account, and we'll send you OTP to reset your password.";
+  static const String forgetYourPassword = "Forget Your Password ?";
+  static const String createNewPassword = "Create New Password";
+  static String submit = "Submit";
+  static String newPassword = "New Password";
+  static const String cancel = "Cancel";
+  static const String otpVerification = "OTP Verification";
+  static const String otpVerificationDes =
+      "Please enter the 4 digit code sent your phone number";
+  static const String resendCode = "Resend Code in 00:30s";
 }

@@ -11,8 +11,10 @@ class AppHeight {
   static double h28 = 28.0.h;
   static double h30 = 30.0.h;
   static double h40 = 40.0.h;
+  static double h54 = 54.0.h;
   static double h58 = 58.0.h;
   static double h70 = 70.0.h;
+  static double h82 = 82.0.h;
   static double h130 = 130.0.h;
   static double h150 = 150.0.h;
 }
@@ -20,6 +22,7 @@ class AppHeight {
 class AppWidth {
   static double w5 = 5.0.w;
   static double w72 = 72.0.w;
+  static double w52 = 52.0.w;
 }
 
 class AppPadding {
