@@ -11,7 +11,7 @@ class Animoo extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(375, 812),
       child: MaterialApp(
-        initialRoute: RoutesNames.login,
+        initialRoute: RoutesNames.signup,
         routes: AppRoutes.getRoutes(),
       ),
     );

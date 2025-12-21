@@ -38,6 +38,8 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.2.3
   gap: ^3.0.1
+  image_picker: ^1.2.1
+  dotted_border: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -91,6 +93,12 @@ flutter:
         - asset: assets/fonts/Poppins/Poppins-Regular.ttf
           style: normal
           weight: 400
+        - asset: assets/fonts/Poppins/Poppins-SemiBold.ttf
+          style: normal
+          weight: 600
+        - asset: assets/fonts/Poppins/Poppins-Medium.ttf
+          style: normal
+          weight: 500
   #       - asset: fonts/TrajanPro_Bold.ttf
   #
   # For details regarding fonts from package dependencies,
