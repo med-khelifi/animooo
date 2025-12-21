@@ -1,5 +1,6 @@
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
+import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
@@ -7,6 +8,7 @@ import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:animooo/core/widgets/named_app_logo.dart';
 import 'package:animooo/views/auth/widgets/custom_clickable_text.dart';
 import 'package:animooo/views/auth/widgets/custom_text_form_field.dart';
+import 'package:animooo/views/auth/widgets/forget_password_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -18,10 +20,15 @@ class LoginView extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        bottomNavigationBar: CustomClickableText(
-          text: AppStrings.doNotHaveAccount,
-          clickableText: AppStrings.signupNow,
-          onTap: () {},
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.only(bottom: AppPadding.ph10),
+          child: CustomClickableText(
+            text: AppStrings.doNotHaveAccount,
+            clickableText: AppStrings.signupNow,
+            onTap: () {
+              Navigator.pushNamed(context, RoutesNames.signup);
+            },
+          ),
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -48,22 +55,9 @@ class LoginView extends StatelessWidget {
                   hint: AppStrings.enterYourPassword,
                   isPassword: true,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(right: AppPadding.pw18),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: CustomText(
-                        text: AppStrings.forgotPassword,
-                        fontSize: AppFontSize.f12,
-                        color: AppColors.primary,
-                        fontFamily: AppFonts.poppins,
-                        fontWeight: FontWeight.w600,
-                        underLined: true,
-                      ),
-                    ),
-                  ),
+                ForgetPasswordText(
+                  onTap: () =>
+                      Navigator.pushNamed(context, RoutesNames.forgetPassword),
                 ),
                 Gap(AppHeight.h30),
                 CustomButton(text: AppStrings.login, onPressed: () {}),
