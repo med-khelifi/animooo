@@ -5,9 +5,8 @@ import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 
-class ForgetPasswordAppBar extends StatelessWidget
-    implements PreferredSizeWidget {
-  const ForgetPasswordAppBar({super.key});
+class CreateNewPasswordAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CreateNewPasswordAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class ForgetPasswordAppBar extends StatelessWidget
       elevation: 0,
       foregroundColor: Colors.white,
       title: CustomText(
-        text: AppStrings.back,
+        text: AppStrings.cancel,
         fontFamily: AppFonts.otamaEp,
         fontWeight: FontWeight.bold,
         fontSize: AppFontSize.f20,
@@ -34,7 +33,6 @@ class ForgetPasswordAppBar extends StatelessWidget
       ),
     );
   }
-
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

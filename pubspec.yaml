@@ -40,6 +40,7 @@ dependencies:
   gap: ^3.0.1
   image_picker: ^1.2.1
   dotted_border: ^3.1.0
+  flutter_otp_text_field: ^1.5.1+1
 
 dev_dependencies:
   flutter_test:
