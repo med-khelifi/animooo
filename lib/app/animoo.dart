@@ -14,6 +14,10 @@ class Animoo extends StatelessWidget {
         initialRoute: RoutesNames.login,
         theme: ThemeData(
           scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+          ),
           splashColor: Colors.transparent,
         ),
         routes: AppRoutes.getRoutes(),
