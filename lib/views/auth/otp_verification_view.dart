@@ -39,13 +39,17 @@ class OtpVerificationView extends StatelessWidget {
               ),
               Gap(AppHeight.h54),
               OtpTextField(
-                numberOfFields: 4,
+                numberOfFields: 5,
+                margin: EdgeInsetsGeometry.symmetric(
+                  horizontal: AppPadding.pw8,
+                ),
                 showFieldAsBox: true,
                 fieldWidth: AppWidth.w52,
                 fieldHeight: AppHeight.h54,
                 borderColor: AppColors.secondary,
                 borderRadius: BorderRadius.circular(AppRadius.r10),
                 focusedBorderColor: AppColors.primary,
+                onSubmit: (value) {},
               ),
               Gap(AppHeight.h40),
               CustomButton(text: AppStrings.confirm, onPressed: () {}),

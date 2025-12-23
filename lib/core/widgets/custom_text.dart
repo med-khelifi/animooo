@@ -1,19 +1,20 @@
-import 'package:animooo/core/resources/app_colors.dart';
-import 'package:animooo/core/resources/app_fonts.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:animooo/core/resources/app_colors.dart';
+import 'package:animooo/core/resources/app_fonts.dart';
 
 class CustomText extends StatelessWidget {
   const CustomText({
     super.key,
     required this.text,
+    this.fontFamily,
     this.fontSize,
     this.fontWeight,
-    this.textAlign,
     this.color,
+    this.textAlign,
     this.maxLines,
-    this.fontFamily,
-    this.underLined,
+    this.decoration,
   });
 
   final String text;
@@ -23,7 +24,7 @@ class CustomText extends StatelessWidget {
   final Color? color;
   final TextAlign? textAlign;
   final int? maxLines;
-  final bool? underLined;
+  final TextDecoration? decoration;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class CustomText extends StatelessWidget {
         fontSize: fontSize ?? 13.sp,
         fontWeight: fontWeight ?? FontWeight.w500,
         color: color ?? AppColors.whiteColor,
-        decoration: underLined ?? false ? TextDecoration.underline : null,
+        decoration: decoration,
       ),
     );
   }

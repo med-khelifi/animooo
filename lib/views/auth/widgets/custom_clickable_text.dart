@@ -40,7 +40,7 @@ class CustomClickableText extends StatelessWidget {
                 fontFamily: AppFonts.poppins,
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
-                underLined: true,
+                decoration: TextDecoration.underline,
               ),
             ),
           ),

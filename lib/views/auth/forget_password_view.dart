@@ -1,10 +1,11 @@
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
+import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
-import 'package:animooo/views/auth/widgets/custom_text_form_field.dart';
+import 'package:animooo/core/widgets/custom_text_form_field.dart';
 import 'package:animooo/views/auth/widgets/forget_password_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -45,7 +46,12 @@ class ForgetPasswordView extends StatelessWidget {
                   hint: AppStrings.enterYourEmailAddress,
                 ),
                 Gap(AppHeight.h150),
-                CustomButton(text: AppStrings.sendCode, onPressed: () {}),
+                CustomButton(
+                  text: AppStrings.sendCode,
+                  onPressed: () {
+                    Navigator.pushNamed(context, RoutesNames.otpVerification);
+                  },
+                ),
               ],
             ),
           ),

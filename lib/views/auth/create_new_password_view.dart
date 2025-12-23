@@ -1,3 +1,4 @@
+import 'package:animooo/controllers/auth_controller.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
@@ -5,13 +6,30 @@ import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:animooo/views/auth/widgets/create_new_password_app_bar.dart';
-import 'package:animooo/views/auth/widgets/custom_text_form_field.dart';
+import 'package:animooo/core/widgets/custom_text_form_field.dart';
 import 'package:animooo/views/auth/widgets/password_rules_list.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class CreateNewPasswordView extends StatelessWidget {
+class CreateNewPasswordView extends StatefulWidget {
   const CreateNewPasswordView({super.key});
+
+  @override
+  State<CreateNewPasswordView> createState() => _CreateNewPasswordViewState();
+}
+
+class _CreateNewPasswordViewState extends State<CreateNewPasswordView> {
+  late AuthController _authController;
+  @override
+  void initState() {
+    super.initState();
+    _authController = AuthController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +57,9 @@ class CreateNewPasswordView extends StatelessWidget {
                   isPassword: true,
                 ),
                 Gap(AppHeight.h8),
-                PasswordRulesList(),
+                PasswordRulesList(
+                  passwordRules: _authController.passwordRulesStatus,
+                ),
                 Gap(AppHeight.h16),
                 CustomTextFormField(
                   label: AppStrings.confirmPassword,

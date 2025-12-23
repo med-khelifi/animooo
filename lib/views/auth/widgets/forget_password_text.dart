@@ -1,4 +1,3 @@
-
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
@@ -23,7 +22,7 @@ class ForgetPasswordText extends StatelessWidget {
             color: AppColors.primary,
             fontFamily: AppFonts.poppins,
             fontWeight: FontWeight.w600,
-            underLined: true,
+            decoration: TextDecoration.underline,
           ),
         ),
       ),
