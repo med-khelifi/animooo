@@ -85,6 +85,28 @@ class AuthController {
     return null;
   }
 
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 12) {
+      return 'Password must be at least 12 characters';
+    }
+    if (!value.contains(RegExp(r'[A-Z]'))) {
+      return 'Password must contain an uppercase letter';
+    }
+    if (!value.contains(RegExp(r'[a-z]'))) {
+      return 'Password must contain a lowercase letter';
+    }
+    if (!value.contains(RegExp(r'[0-9]'))) {
+      return 'Password must contain a number';
+    }
+    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      return 'Password must contain a special character';
+    }
+    return null;
+  }
+
   String? validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Confirm password is required';
@@ -118,6 +140,12 @@ class AuthController {
 
   void signup() {
     if (signupFormKey.currentState!.validate()) {
+      // Proceed with signup
+    }
+  }
+
+  void login() {
+if (loginFormKey.currentState!.validate()) {
       // Proceed with signup
     }
   }
