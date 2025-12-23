@@ -6,8 +6,9 @@ import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
 
 class CustomPointedText extends StatelessWidget {
-  const CustomPointedText({super.key, required this.text});
+  const CustomPointedText({super.key, required this.text, this.isValid});
   final String text;
+  final bool? isValid;
   @override
   Widget build(BuildContext context) {
     return RichText(
@@ -19,7 +20,7 @@ class CustomPointedText extends StatelessWidget {
             child: Icon(
               Icons.circle,
               size: AppFontSize.f8,
-              color: AppColors.green,
+              color: isValid ?? false ? AppColors.green : AppColors.red,
             ),
           ),
           WidgetSpan(child: SizedBox(width: AppWidth.w5)),
@@ -28,7 +29,8 @@ class CustomPointedText extends StatelessWidget {
               text: text,
               fontSize: AppFontSize.f10,
               fontFamily: AppFonts.poppins,
-              color: AppColors.red,
+              color: isValid ?? false ? AppColors.green : AppColors.red,
+              decoration: isValid ?? false ? TextDecoration.lineThrough : null,
             ),
           ),
         ],
