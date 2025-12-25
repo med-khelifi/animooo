@@ -1,4 +1,4 @@
-import 'package:animooo/controllers/auth_controller.dart';
+import 'package:animooo/core/enums/password_rules.dart';
 import 'package:flutter/material.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';

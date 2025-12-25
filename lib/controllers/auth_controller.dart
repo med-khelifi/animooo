@@ -1,9 +1,11 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:animooo/core/enums/image_picker_state.dart';
+import 'package:animooo/core/enums/password_rules.dart';
 import 'package:animooo/core/resources/app_strings.dart';
+import 'package:animooo/core/utils/utils.dart';
+import 'package:animooo/core/widgets/bottom_sheets.dart';
 import 'package:flutter/widgets.dart';
-
-enum PasswordRules { minLength, uppercase, lowercase, digit, specialChar }
 
 class AuthController {
   late TextEditingController emailController;
@@ -17,6 +19,11 @@ class AuthController {
   late Stream<Map<PasswordRules, (String rule, bool isValid)>>
   passwordRulesStream;
   late Sink<Map<PasswordRules, (String rule, bool isValid)>> passwordRulesSink;
+
+  late StreamController<(ImagePickerState state, File? imageFile)>
+  imageStreamController;
+  late Stream<(ImagePickerState state, File? imageFile)> imageStream;
+  late Sink<(ImagePickerState state, File? imageFile)> imageSink;
   void _initControllers() {
     emailController = TextEditingController();
     passwordController = TextEditingController();
@@ -24,6 +31,17 @@ class AuthController {
     firstNameController = TextEditingController();
     lastNamaController = TextEditingController();
     phoneController = TextEditingController();
+  }
+
+  void _initStreams() {
+    passwordRulesStreamController = StreamController();
+    passwordRulesSink = passwordRulesStreamController.sink;
+    passwordRulesStream = passwordRulesStreamController.stream
+        .asBroadcastStream();
+
+    imageStreamController = StreamController();
+    imageSink = imageStreamController.sink;
+    imageStream = imageStreamController.stream.asBroadcastStream();
   }
 
   Map<PasswordRules, (String rule, bool isValid)> passwordRulesStatus = {
@@ -36,88 +54,92 @@ class AuthController {
 
   GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+
+  late ImagePickerState _userImageState;
+  File? _userImageFile;
+
   AuthController() {
     _initControllers();
-    passwordRulesStreamController = StreamController();
-    passwordRulesSink = passwordRulesStreamController.sink;
-    passwordRulesStream = passwordRulesStreamController.stream;
+    _initStreams();
+    _userImageState = ImagePickerState.none;
   }
 
   String? validateFistName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'First name is required';
+      return AppStrings.firstNameIsRequired;
     }
     if (value.length < 3) {
-      return 'First name is must be at least 3 characters';
+      return AppStrings.firstNameIsMustBeAtLeast3Char;
     }
     return null;
   }
 
   String? validateLastName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Last name is required';
+      return AppStrings.lastNameIsRequired;
     }
     if (value.length < 3) {
-      return 'Last name is must be at least 3 characters';
+      return AppStrings.lastNameIsMustBeAtLeast3Char;
     }
     return null;
   }
 
   String? validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Phone number is required';
+      return AppStrings.phoneIsRequired;
     }
     if (!value.contains(RegExp(r'[0-9]')) ||
         value.contains(RegExp(r'[a-zA-Z]')) ||
         value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-      return 'Phone number must contain only digits';
+      return AppStrings.phoneMustContainsOnlyDigits;
     }
     return null;
   }
 
   String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppStrings.emailIsRequired;
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Enter a valid email address';
+      return AppStrings.enterAValidEmailAddress;
     }
     return null;
   }
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppStrings.passwordIsRequired;
     }
     if (value.length < 12) {
-      return 'Password must be at least 12 characters';
+      return AppStrings.passwordMustBeAtLeast12Characters;
     }
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'Password must contain an uppercase letter';
+      return AppStrings.passwordMustContainAnUppercaseLetter;
     }
     if (!value.contains(RegExp(r'[a-z]'))) {
-      return 'Password must contain a lowercase letter';
+      return AppStrings.passwordMustContainALowercaseLetter;
     }
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'Password must contain a number';
+      return AppStrings.passwordMustContainANumber;
     }
     if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-      return 'Password must contain a special character';
+      return AppStrings.passwordMustContainASpecialCharacter;
     }
     return null;
   }
 
   String? validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Confirm password is required';
+      return AppStrings.confirmPasswordIsRequired;
     }
     if (value != passwordController.text) {
-      return 'Passwords do not match';
+      return AppStrings.passwordsDoNotMatch;
     }
     return null;
   }
 
   void onPasswordChange(String value) {
+    value = value.trim();
     passwordRulesStatus.updateAll((key, ruleStatus) {
       switch (key) {
         case PasswordRules.minLength:
@@ -139,14 +161,41 @@ class AuthController {
   }
 
   void signup() {
+    if (_userImageState == ImagePickerState.none) {
+      _userImageState = ImagePickerState.error;
+    }
+    if (_userImageState == ImagePickerState.error) {
+      imageSink.add((ImagePickerState.error, null));
+      return;
+    }
     if (signupFormKey.currentState!.validate()) {
       // Proceed with signup
     }
   }
 
   void login() {
-if (loginFormKey.currentState!.validate()) {
+    if (loginFormKey.currentState!.validate()) {
       // Proceed with signup
     }
+  }
+
+  void onTakeImagePressed(BuildContext context) async {
+    BottomSheets.showTakeImageBottomSheet(
+      context,
+      onTakeFromCameraPressed: () async {
+        _userImageFile = await Utils.takeImageCamera();
+        if (_userImageFile != null) {
+          _userImageState = ImagePickerState.picked;
+          imageSink.add((_userImageState, _userImageFile));
+        }
+      },
+      onTakeFromGalleryPressed: () async {
+        _userImageFile = await Utils.takeImageGallery();
+        if (_userImageFile != null) {
+          _userImageState = ImagePickerState.picked;
+          imageSink.add((_userImageState, _userImageFile));
+        }
+      },
+    );
   }
 }
