@@ -42,4 +42,31 @@ class AppStrings {
   static const String otpVerificationDes =
       "Please enter the 4 digit code sent your phone number";
   static const String resendCode = "Resend Code in 00:30s";
+  static const String firstNameIsRequired = 'First name is required';
+  static const String firstNameIsMustBeAtLeast3Char =
+      'First name is must be at least 3 characters';
+  static const String lastNameIsRequired = 'Last name is required';
+  static const String lastNameIsMustBeAtLeast3Char =
+      'Last name is must be at least 3 characters';
+  static const String phoneIsRequired = 'Phone is required';
+  static const String phoneMustContainsOnlyDigits =
+      'Phone number must contain only digits';
+  static const String emailIsRequired = 'Email is required';
+  static const String enterAValidEmailAddress = 'Enter a valid email address';
+  static const String passwordIsRequired = 'Password is required';
+  static const String passwordMustBeAtLeast12Characters =
+      'Password must be at least 12 characters';
+  static const String passwordMustContainAnUppercaseLetter =
+      'Password must contain an uppercase letter';
+  static const String passwordMustContainALowercaseLetter =
+      'Password must contain an uppercase letter';
+  static const String passwordMustContainANumber =
+      'Password must contain a number';
+  static const String passwordMustContainASpecialCharacter =
+      'Password must contain a special character';
+  static const String confirmPasswordIsRequired =
+      'Confirm password is required';
+  static const String passwordsDoNotMatch = 'Passwords do not match';
+  static const String takeImageFromGallery = "Take image from gallery";
+  static const String takeImageFromCamera = "Take image from camera";
 }

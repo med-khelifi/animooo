@@ -1,4 +1,5 @@
 import 'package:animooo/controllers/auth_controller.dart';
+import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
@@ -8,6 +9,7 @@ import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:animooo/core/widgets/named_app_logo.dart';
 import 'package:animooo/views/auth/widgets/custom_clickable_text.dart';
 import 'package:animooo/core/widgets/custom_text_form_field.dart';
+import 'package:animooo/views/auth/widgets/handel_image_ui.dart';
 import 'package:animooo/views/auth/widgets/password_rules_list.dart';
 import 'package:animooo/views/auth/widgets/select_image_box.dart';
 import 'package:flutter/material.dart';
@@ -97,9 +99,11 @@ class _SignupViewState extends State<SignupView> {
                     stream: _authController.passwordRulesStream,
                     builder: (context, asyncSnapshot) {
                       return PasswordRulesList(
-                        passwordRules:asyncSnapshot.data ?? _authController.passwordRulesStatus,
+                        passwordRules:
+                            asyncSnapshot.data ??
+                            _authController.passwordRulesStatus,
                       );
-                    }
+                    },
                   ),
                   Gap(AppHeight.h16),
                   CustomTextFormField(
@@ -121,9 +125,23 @@ class _SignupViewState extends State<SignupView> {
                     ),
                   ),
                   Gap(AppHeight.h8),
-                  SelectImageBox(),
+                  StreamBuilder(
+                    stream: _authController.imageStream,
+                    builder: (context, asyncSnapshot) {
+                      return HandelImageUi(
+                        onTap: () =>
+                            _authController.onTakeImagePressed(context),
+                        imageState:
+                            asyncSnapshot.data?.$1 ?? ImagePickerState.none,
+                        file: asyncSnapshot.data?.$2,
+                      );
+                    },
+                  ),
                   Gap(AppHeight.h28),
-                  CustomButton(text: AppStrings.signup, onPressed: _authController.signup),
+                  CustomButton(
+                    text: AppStrings.signup,
+                    onPressed: _authController.signup,
+                  ),
                   Gap(AppHeight.h8),
                   CustomClickableText(
                     text: AppStrings.haveAnAccountAlready,

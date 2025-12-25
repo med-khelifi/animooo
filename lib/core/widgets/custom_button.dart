@@ -7,9 +7,11 @@ import 'package:gap/gap.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
+  final String? textFontFamily;
   final VoidCallback onPressed;
   final double? height;
   final double? width;
+  final double? elevation;
   final double? borderRadius;
   final double? fontSize;
   final FontWeight? fontWeight;
@@ -29,11 +31,14 @@ class CustomButton extends StatelessWidget {
     this.textColor,
     this.borderRadius,
     this.widget,
+    this.elevation,
+    this.textFontFamily,
   });
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+      elevation: elevation ,
       height: height ?? AppHeight.h40,
       color: color ?? AppColors.primary,
       minWidth: width ?? double.infinity,
@@ -49,7 +54,7 @@ class CustomButton extends StatelessWidget {
             fontSize: fontSize ?? AppFontSize.f14,
             fontWeight: fontWeight ?? FontWeight.w400,
             color: textColor ?? AppColors.whiteColor,
-            fontFamily: AppFonts.poppins,
+            fontFamily: textFontFamily ?? AppFonts.poppins,
           ),
           Gap(widget == null ? 0 : AppHeight.h15),
           if (widget != null) widget!,
