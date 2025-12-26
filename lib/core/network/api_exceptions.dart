@@ -33,8 +33,7 @@ class ApiExceptions {
         return ApiError(message: "No internet connection.");
 
       case DioExceptionType.unknown:
-      default:
-        return ApiError(message: "Unexpected error occurred.");
+      return ApiError(message: "Unexpected error occurred.");
     }
   }
 
@@ -52,8 +51,6 @@ class ApiExceptions {
         return ApiError(message: "Resource not found.");
       case 500:
         return ApiError(message: "Server error. Try again later.");
-      case 503:
-        return ApiError(message: "Service unavailable.");
       case 503:
         return ApiError(message: "Service unavailable.");
       default:
