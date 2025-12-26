@@ -11,7 +11,6 @@ import 'package:animooo/views/auth/widgets/custom_clickable_text.dart';
 import 'package:animooo/core/widgets/custom_text_form_field.dart';
 import 'package:animooo/views/auth/widgets/handel_image_ui.dart';
 import 'package:animooo/views/auth/widgets/password_rules_list.dart';
-import 'package:animooo/views/auth/widgets/select_image_box.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
