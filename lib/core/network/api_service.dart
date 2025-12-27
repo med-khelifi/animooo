@@ -5,7 +5,8 @@ import 'package:animooo/core/network/dio_client.dart';
 import 'package:dio/dio.dart';
 
 class ApiService extends ApiMethods {
-  final DioClient _dioClient = DioClient();
+  final DioClient _dioClient ;
+  ApiService({required DioClient dioClient}) : _dioClient = dioClient;
 
   @override
   Future<dynamic> get({required String endpoint}) async {

@@ -8,6 +8,7 @@ import 'package:animooo/core/widgets/bottom_sheets.dart';
 import 'package:flutter/widgets.dart';
 
 class AuthController {
+  
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
