@@ -4,16 +4,16 @@ import '../network/dio_client.dart';
 import '../network/api_service.dart';
 import '../../services/auth_service.dart';
 
-final sl = GetIt.instance;
+final services = GetIt.instance;
 
 void setupInjection() {
-  sl.registerLazySingleton<DioClient>(() => DioClient());
+  services.registerLazySingleton<DioClient>(() => DioClient());
 
-  sl.registerLazySingleton<ApiService>(
-    () => ApiService(dioClient: sl()),
+  services.registerLazySingleton<ApiService>(
+    () => ApiService(dioClient: services()),
   );
 
-  sl.registerLazySingleton<AuthService>(
-    () => AuthService(apiService: sl()),
+  services.registerLazySingleton<AuthService>(
+    () => AuthService(apiService: services()),
   );
 }

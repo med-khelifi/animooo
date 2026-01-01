@@ -3,12 +3,20 @@ import 'package:dio/dio.dart';
 
 class ApiExceptions {
   static ApiError handleException(DioException e) {
-    if (e.response != null && e.response?.data != null && e.response?.data is Map<String,dynamic>) {
-        final statusCode = e.response!.data["statusCode"];
-        final errors = e.response!.data["error"];
-        return ApiError(statusCode: statusCode, errors: errors);
-    }
+    if (e.response != null &&
+        e.response?.data != null &&
+        e.response?.data is Map<String, dynamic>) {
+      final data = e.response!.data as Map<String, dynamic>;
+      final statusCode = data["statusCode"];
 
+      List<String>? errors;
+
+      if (data["error"] is List) {
+        errors = List<String>.from(data["error"]);
+      }
+
+      return ApiError(statusCode: statusCode, errors: errors);
+    }
 
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
@@ -33,7 +41,7 @@ class ApiExceptions {
         return ApiError(message: "No internet connection.");
 
       case DioExceptionType.unknown:
-      return ApiError(message: "Unexpected error occurred.");
+        return ApiError(message: "Unexpected error occurred.");
     }
   }
 

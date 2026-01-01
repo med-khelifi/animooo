@@ -1,7 +1,7 @@
 import 'package:animooo/core/network/api_error.dart';
 import 'package:animooo/core/network/api_service.dart';
 import 'package:animooo/core/response/response.dart';
-import 'package:animooo/models/signup_request_model.dart';
+import 'package:animooo/core/requests/signup_request_model.dart';
 import 'package:animooo/models/user_model.dart';
 
 class AuthService {
@@ -13,11 +13,15 @@ class AuthService {
   }) async {
     try {
       var result = await _apiService.post(
-        endpoint: '/register',
-        data: signupRequest,
+        endpoint: '/signup',
+        data: await signupRequest.toFormData(),
       );
       if (result is ApiError) {
-        return Response.failure(result);
+        return Response.failure(
+          result.errors != null
+              ? ApiError(errors: result.errors)
+              : ApiError(message: result.message),
+        );
       }
       // data section from response
       final data = result.data;
