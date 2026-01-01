@@ -8,7 +8,7 @@ class DioClient {
   DioClient() {
    _dio = Dio(
     BaseOptions(
-    baseUrl: 'https://sonic-zdi0.onrender.com/api',
+    baseUrl: 'http://10.0.2.2:8000/api',
     headers: {'Content-Type': 'application/json'},
     ),);
     _dio.interceptors.add(

@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/enums/password_rules.dart';
+import 'package:animooo/core/requests/signup_request_model.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/utils/utils.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
+import 'package:animooo/services/auth_service.dart';
 import 'package:flutter/widgets.dart';
 
 class AuthController {
-  
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
@@ -26,12 +28,12 @@ class AuthController {
   late Stream<(ImagePickerState state, File? imageFile)> imageStream;
   late Sink<(ImagePickerState state, File? imageFile)> imageSink;
   void _initControllers() {
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
-    firstNameController = TextEditingController();
-    lastNamaController = TextEditingController();
-    phoneController = TextEditingController();
+    emailController = TextEditingController(text: "khelifim440@gmail.com");
+    passwordController = TextEditingController(text: "Password@1234");
+    confirmPasswordController = TextEditingController(text: "Password@1234");
+    firstNameController = TextEditingController(text: "Khelifi");
+    lastNamaController = TextEditingController(text: "Mohamed");
+    phoneController = TextEditingController(text: "01234567890");
   }
 
   void _initStreams() {
@@ -161,7 +163,7 @@ class AuthController {
     passwordRulesSink.add(passwordRulesStatus);
   }
 
-  void signup() {
+  void signup() async {
     if (_userImageState == ImagePickerState.none) {
       _userImageState = ImagePickerState.error;
     }
@@ -170,7 +172,23 @@ class AuthController {
       return;
     }
     if (signupFormKey.currentState!.validate()) {
-      // Proceed with signup
+      final authService = services<AuthService>();
+      final res = await authService.register(
+        signupRequest: SignupRequestModel(
+          firstName: firstNameController.text.trim(),
+          lastName: lastNamaController.text.trim(),
+          email: emailController.text.trim(),
+          phone: phoneController.text.trim(),
+          image: _userImageFile!.path,
+          password: passwordController.text.trim(),
+        ),
+      );
+      if (res.isSuccess) {
+        print("----------------------------------------------ok----------------------------------------------------------------------------");
+      }
+      else {
+        print("${res.error?.errors ?? res.error?.message ?? ";"}----------------------------------------------not ok----------------------------------------------------------------------------");
+      }
     }
   }
 
