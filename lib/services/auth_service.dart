@@ -29,15 +29,15 @@ class AuthService {
       if (data == null || data is! Map) {
         return Response.failure(ApiError(message: 'Invalid backend response'));
       }
-      int code = int.tryParse(data["code"].toString()) ?? 500;
+      int code = int.tryParse(data["statusCode"].toString()) ?? 500;
       if (code < 200 || code > 299) {
         return Response.failure(
           ApiError(message: data["message"] ?? "Unknown backend error"),
         );
       }
-
+      final alert = data["alert"].toString();
       // extract user data
-      final userData = data["data"];
+      final userData = data["user"];
 
       if (userData == null || userData is! Map) {
         return Response.failure(ApiError(message: "Invalid user object"));
@@ -45,7 +45,7 @@ class AuthService {
 
       final user = UserModel.fromJson(userData as Map<String, dynamic>);
 
-      return Response.success(user);
+      return Response.success(user,alert: alert);
     } catch (e) {
       return Response.failure(ApiError(message: e.toString()));
     }

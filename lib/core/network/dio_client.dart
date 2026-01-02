@@ -8,7 +8,7 @@ class DioClient {
   DioClient() {
    _dio = Dio(
     BaseOptions(
-    baseUrl: 'http://10.0.2.2:8000/api',
+    baseUrl: 'http://192.168.100.127:8000/api',
     headers: {'Content-Type': 'application/json'},
     ),);
     _dio.interceptors.add(

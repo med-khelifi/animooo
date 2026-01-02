@@ -139,7 +139,7 @@ class _SignupViewState extends State<SignupView> {
                   Gap(AppHeight.h28),
                   CustomButton(
                     text: AppStrings.signup,
-                    onPressed: _authController.signup
+                    onPressed:() => _authController.signup(context: context)
                   ),
                   Gap(AppHeight.h8),
                   CustomClickableText(
