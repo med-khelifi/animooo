@@ -6,6 +6,7 @@ import 'package:animooo/core/enums/password_rules.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/utils/utils.dart';
+import 'package:animooo/core/widgets/app_snackbar.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
 import 'package:animooo/services/auth_service.dart';
 import 'package:flutter/widgets.dart';
@@ -163,7 +164,7 @@ class AuthController {
     passwordRulesSink.add(passwordRulesStatus);
   }
 
-  void signup() async {
+  void signup({required BuildContext context}) async {
     if (_userImageState == ImagePickerState.none) {
       _userImageState = ImagePickerState.error;
     }
@@ -184,10 +185,11 @@ class AuthController {
         ),
       );
       if (res.isSuccess) {
-        print("----------------------------------------------ok----------------------------------------------------------------------------");
+        AppSnackBar.showSuccess(context, message: res.alert ?? "signup successfully ");
       }
       else {
-        print("${res.error?.errors ?? res.error?.message ?? ";"}----------------------------------------------not ok----------------------------------------------------------------------------");
+        String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+        AppSnackBar.showError(context, message: message??"error");
       }
     }
   }

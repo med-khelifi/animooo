@@ -24,6 +24,8 @@ class AppWidth {
   static double w5 = 5.0.w;
   static double w72 = 72.0.w;
   static double w52 = 52.0.w;
+
+  static double w12 = 12.w;
 }
 
 class AppPadding {
@@ -32,10 +34,13 @@ class AppPadding {
   static double pw10 = 10.0.w;
   static double ph10 = 10.0.h;
   static double pw18 = 18.0.w;
+
+  static double ph18 = 18.0.w;
 }
 
 class AppRadius {
   static double r10 = 10.0.r;
+  static double r12 = 12.0.r;
   static double r5 = 5.0.r;
 }
 

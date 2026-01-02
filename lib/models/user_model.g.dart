@@ -8,20 +8,20 @@ part of 'user_model.dart';
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   id: (json['id'] as num).toInt(),
-  firstName: json['firstName'] as String,
-  lastName: json['lastName'] as String,
+  firstName: json['first_name'] as String,
+  lastName: json['last_name'] as String,
   email: json['email'] as String,
   phone: json['phone'] as String,
-  imagePath: json['imagePath'] as String,
-  isValid: json['isValid'] as String,
+  imagePath: json['image_path'] as String,
+  isValid: json['is_verified'] as String,
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'id': instance.id,
-  'firstName': instance.firstName,
-  'lastName': instance.lastName,
+  'first_name': instance.firstName,
+  'last_name': instance.lastName,
   'email': instance.email,
   'phone': instance.phone,
-  'imagePath': instance.imagePath,
-  'isValid': instance.isValid,
+  'image_path': instance.imagePath,
+  'is_verified': instance.isValid,
 };
