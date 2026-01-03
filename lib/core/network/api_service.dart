@@ -9,9 +9,9 @@ class ApiService extends ApiMethods {
   ApiService({required DioClient dioClient}) : _dioClient = dioClient;
 
   @override
-  Future<dynamic> get({required String endpoint}) async {
+  Future<dynamic> get({required String endpoint,Map<String,dynamic>? queryParams}) async {
     try {
-      final response = await _dioClient.dio.get(endpoint);
+      final response = await _dioClient.dio.get(endpoint,queryParameters: queryParams,);
       return response;
     } on DioException catch (e) {
       return ApiExceptions.handleException(e);

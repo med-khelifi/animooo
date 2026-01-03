@@ -26,6 +26,8 @@ class AppWidth {
   static double w52 = 52.0.w;
 
   static double w12 = 12.w;
+
+  static double w20 = 20.w;
 }
 
 class AppPadding {
