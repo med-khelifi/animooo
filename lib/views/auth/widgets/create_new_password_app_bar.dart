@@ -20,7 +20,7 @@ class CreateNewPasswordAppBar extends StatelessWidget implements PreferredSizeWi
         fontSize: AppFontSize.f20,
         color: AppColors.primary,
       ),
-      leadingWidth: 10,
+      leadingWidth: AppWidth.w20,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);

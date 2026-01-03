@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 
-class Utils {
+class ImagePickerUtils {
   static Future<File?> _takeImage(ImageSource source) async {
     XFile? imageFile = await ImagePicker().pickImage(source: source);
     if (imageFile == null) {

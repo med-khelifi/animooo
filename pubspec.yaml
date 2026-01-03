@@ -46,6 +46,7 @@ dependencies:
   json_serializable: ^6.11.3
   build_runner: ^2.10.4
   get_it: ^9.2.0
+  internet_connection_checker: ^3.0.1
 
 dev_dependencies:
   flutter_test:

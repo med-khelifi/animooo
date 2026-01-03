@@ -13,6 +13,7 @@ class ForgetPasswordAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
+      leadingWidth: AppWidth.w12,
       foregroundColor: Colors.white,
       title: CustomText(
         text: AppStrings.back,
@@ -21,7 +22,6 @@ class ForgetPasswordAppBar extends StatelessWidget
         fontSize: AppFontSize.f20,
         color: AppColors.primary,
       ),
-      leadingWidth: 10,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);

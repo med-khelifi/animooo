@@ -4,8 +4,9 @@ import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/enums/password_rules.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
+import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
-import 'package:animooo/core/utils/utils.dart';
+import 'package:animooo/core/utils/image_picker_utils.dart';
 import 'package:animooo/core/widgets/app_snackbar.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
 import 'package:animooo/services/auth_service.dart';
@@ -185,13 +186,15 @@ class AuthController {
         ),
       );
       if (res.isSuccess) {
-        AppSnackBar.showSuccess(context, message: res.alert ?? "signup successfully ");
+        AppSnackBar.showSuccess(context, message: res.alert ?? "signup successfully, please check your email for verification");
+        Navigator.pushNamed(context, RoutesNames.otpVerification);
       }
       else {
         String? message = res.error?.errors?.join('\n') ?? res.error?.message;
         AppSnackBar.showError(context, message: message??"error");
       }
     }
+    print("signup");
   }
 
   void login() {
@@ -204,14 +207,14 @@ class AuthController {
     BottomSheets.showTakeImageBottomSheet(
       context,
       onTakeFromCameraPressed: () async {
-        _userImageFile = await Utils.takeImageCamera();
+        _userImageFile = await ImagePickerUtils.takeImageCamera();
         if (_userImageFile != null) {
           _userImageState = ImagePickerState.picked;
           imageSink.add((_userImageState, _userImageFile));
         }
       },
       onTakeFromGalleryPressed: () async {
-        _userImageFile = await Utils.takeImageGallery();
+        _userImageFile = await ImagePickerUtils.takeImageGallery();
         if (_userImageFile != null) {
           _userImageState = ImagePickerState.picked;
           imageSink.add((_userImageState, _userImageFile));
