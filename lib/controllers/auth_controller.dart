@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/enums/password_rules.dart';
+import 'package:animooo/core/requests/otp_verification_code_request.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
 import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
@@ -29,6 +31,13 @@ class AuthController {
   imageStreamController;
   late Stream<(ImagePickerState state, File? imageFile)> imageStream;
   late Sink<(ImagePickerState state, File? imageFile)> imageSink;
+
+  late StreamController<int> otpCounterStreamController;
+  late Stream<int> otpCounterStream;
+  late Sink<int> otpCounterSink;
+
+  late Timer _otpCodeTimer;
+  late String _otpCode;
   void _initControllers() {
     emailController = TextEditingController(text: "khelifim440@gmail.com");
     passwordController = TextEditingController(text: "Password@1234");
@@ -47,6 +56,9 @@ class AuthController {
     imageStreamController = StreamController();
     imageSink = imageStreamController.sink;
     imageStream = imageStreamController.stream.asBroadcastStream();
+    otpCounterStreamController = StreamController();
+    otpCounterStream = otpCounterStreamController.stream.asBroadcastStream();
+    otpCounterSink = otpCounterStreamController.sink;
   }
 
   Map<PasswordRules, (String rule, bool isValid)> passwordRulesStatus = {
@@ -59,6 +71,7 @@ class AuthController {
 
   GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> otpFormKey = GlobalKey<FormState>();
 
   late ImagePickerState _userImageState;
   File? _userImageFile;
@@ -186,15 +199,22 @@ class AuthController {
         ),
       );
       if (res.isSuccess) {
-        AppSnackBar.showSuccess(context, message: res.alert ?? "signup successfully, please check your email for verification");
-        Navigator.pushNamed(context, RoutesNames.otpVerification);
-      }
-      else {
+        AppSnackBar.showSuccess(
+          context,
+          message:
+              res.alert ??
+              "signup successfully, please check your email for verification",
+        );
+        Navigator.pushNamed(
+          context,
+          RoutesNames.otpVerification,
+          arguments: emailController.text.trim(),
+        );
+      } else {
         String? message = res.error?.errors?.join('\n') ?? res.error?.message;
-        AppSnackBar.showError(context, message: message??"error");
+        AppSnackBar.showError(context, message: message ?? "error");
       }
     }
-    print("signup");
   }
 
   void login() {
@@ -221,5 +241,80 @@ class AuthController {
         }
       },
     );
+  }
+
+  void dispose() {
+    emailController?.dispose();
+    passwordController?.dispose();
+    confirmPasswordController?.dispose();
+    firstNameController?.dispose();
+    lastNamaController?.dispose();
+    phoneController?.dispose();
+    passwordRulesStreamController?.close();
+    imageStreamController?.close();
+    passwordRulesStreamController?.close();
+    otpCounterStreamController?.close();
+  }
+
+  String? validateOtpCode(String? value) {
+    if (value == null) {
+      return "please enter otp code";
+    } else if (!value.contains(RegExp(r'^[0-9]+$'))) {
+      return "only numbers allowed";
+    }
+
+    return null;
+  }
+
+  void startResendCodeTimer() {
+    int counter = 30;
+    _otpCodeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      otpCounterSink.add(counter);
+      counter--;
+      if (counter < 0) {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> verifyOtpCode(BuildContext context, String email) async {
+    final authService = services<AuthService>();
+    final res = await authService.otpVerification(
+      otpRequest: OtpVerificationCodeRequest(email: email, code: _otpCode),
+    );
+    if (res.isSuccess) {
+      AppSnackBar.showSuccess(
+        context,
+        message: res.alert ?? "verification succeeded",
+      );
+    } else {
+      String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+      AppSnackBar.showError(context, message: message ?? "error");
+    }
+  }
+
+  Future<void> resendOtpCode(
+    BuildContext context,
+    String email, {
+    bool restartTimer = false,
+  }) async {
+    final authService = services<AuthService>();
+    final res = await authService.resendNewOtpCode(email: email);
+    if (res.isSuccess) {
+      AppSnackBar.showSuccess(
+        context,
+        message: res.alert ?? "verification code send",
+      );
+      if (restartTimer) {
+        startResendCodeTimer();
+      }
+    } else {
+      String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+      AppSnackBar.showError(context, message: message ?? "error");
+    }
+  }
+
+  void onOtpCodeSubmitted(String value) {
+    _otpCode = value;
   }
 }

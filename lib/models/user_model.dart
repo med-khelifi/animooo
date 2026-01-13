@@ -1,13 +1,19 @@
 import 'package:json_annotation/json_annotation.dart';
+
 part 'user_model.g.dart';
-@JsonSerializable() 
+
+@JsonSerializable()
 class UserModel {
   int id;
+  @JsonKey(name: "first_name")
   String firstName;
+  @JsonKey(name: "last_name")
   String lastName;
   String email;
   String phone;
+  @JsonKey(name: "image_path")
   String imagePath;
+  @JsonKey(name: "is_verified")
   String isValid;
   UserModel({
     required this.id,
@@ -19,6 +25,7 @@ class UserModel {
     required this.isValid,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }

@@ -28,6 +28,7 @@ class _CreateNewPasswordViewState extends State<CreateNewPasswordView> {
 
   @override
   void dispose() {
+    _authController.dispose();
     super.dispose();
   }
 

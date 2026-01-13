@@ -2,9 +2,10 @@ import 'package:animooo/core/network/api_error.dart';
 import 'package:animooo/core/network/api_service.dart';
 import 'package:animooo/core/requests/login_request.dart';
 import 'package:animooo/core/requests/otp_verification_code_request.dart';
-import 'package:animooo/core/response/response.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
+import 'package:animooo/core/response/response.dart';
 import 'package:animooo/models/user_model.dart';
+import 'package:animooo/models/user_with_tokens_model.dart';
 
 class AuthService {
   final ApiService _apiService;
@@ -19,9 +20,7 @@ class AuthService {
         data: await signupRequest.toFormData(),
       );
       if (result is ApiError) {
-        return Response.failure(
-          result
-        );
+        return Response.failure(result);
       }
       // data section from response
       final data = result.data;
@@ -31,9 +30,7 @@ class AuthService {
       }
       int code = int.tryParse(data["statusCode"].toString()) ?? 500;
       if (code < 200 || code > 299) {
-        return Response.failure(
-          ApiError(message: "Unknown backend error"),
-        );
+        return Response.failure(ApiError(message: "Unknown backend error"));
       }
       final alert = data["alert"].toString();
       // extract user data
@@ -45,7 +42,7 @@ class AuthService {
 
       final user = UserModel.fromJson(userData as Map<String, dynamic>);
 
-      return Response.success(user,alert: alert);
+      return Response.success(user, alert: alert);
     } catch (e) {
       return Response.failure(ApiError(message: e.toString()));
     }
@@ -60,9 +57,7 @@ class AuthService {
         queryParams: loginRequest.toJson(),
       );
       if (result is ApiError) {
-        return Response.failure(
-          result
-        );
+        return Response.failure(result);
       }
       // data section from response
       final data = result.data;
@@ -86,11 +81,13 @@ class AuthService {
 
       final user = UserModel.fromJson(userData as Map<String, dynamic>);
 
-      return Response.success(user,alert: alert);
+      return Response.success(user, alert: alert);
     } catch (e) {
       return Response.failure(ApiError(message: e.toString()));
     }
-  }Future<Response<UserModel>> otpVerification({
+  }
+
+  Future<Response<UserWithTokensModel>> otpVerification({
     required OtpVerificationCodeRequest otpRequest,
   }) async {
     try {
@@ -99,9 +96,7 @@ class AuthService {
         data: otpRequest.toJson(),
       );
       if (result is ApiError) {
-        return Response.failure(
-          result
-        );
+        return Response.failure(result);
       }
       // data section from response
       final data = result.data;
@@ -111,21 +106,46 @@ class AuthService {
       }
       int code = int.tryParse(data["statusCode"].toString()) ?? 500;
       if (code < 200 || code > 299) {
-        return Response.failure(
-          ApiError(message:"Unknown backend error"),
-        );
+        return Response.failure(ApiError(message: "Unknown backend error"));
       }
       final message = data["message"].toString();
       // extract user data
-      final userData = data["user"];
+      final userData = UserWithTokensModel.fromJson(
+        data as Map<String, dynamic>,
+      );
 
-      if (userData == null || userData is! Map) {
+      if (userData == null) {
         return Response.failure(ApiError(message: "Invalid user object"));
       }
 
-      final user = UserModel.fromJson(userData as Map<String, dynamic>);
+      return Response.success(userData, alert: message);
+    } catch (e) {
+      return Response.failure(ApiError(message: e.toString()));
+    }
+  }
 
-      return Response.success(user,alert: message);
+  Future<Response<bool>> resendNewOtpCode({required String email}) async {
+    try {
+      var result = await _apiService.post(
+        endpoint: '/create_new_verfication_code',
+        data: {"email": email},
+      );
+      if (result is ApiError) {
+        return Response.failure(result);
+      }
+      // data section from response
+      final data = result.data;
+
+      if (data == null || data is! Map) {
+        return Response.failure(ApiError(message: 'Invalid backend response'));
+      }
+      int code = int.tryParse(data["statusCode"].toString()) ?? 500;
+      if (code < 200 || code > 299) {
+        return Response.failure(ApiError(message: "Unknown backend error"));
+      }
+      final message = data["message"].toString();
+
+      return Response.success(true, alert: message);
     } catch (e) {
       return Response.failure(ApiError(message: e.toString()));
     }

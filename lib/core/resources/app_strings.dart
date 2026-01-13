@@ -40,8 +40,8 @@ class AppStrings {
   static const String cancel = "Cancel";
   static const String otpVerification = "OTP Verification";
   static const String otpVerificationDes =
-      "Please enter the 4 digit code sent your phone number";
-  static const String resendCode = "Resend Code in 00:30s";
+      "Please enter the 4 digit code sent to your email";
+  static const String resendCode = "Resend Code";
   static const String firstNameIsRequired = 'First name is required';
   static const String firstNameIsMustBeAtLeast3Char =
       'First name is must be at least 3 characters';

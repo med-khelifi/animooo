@@ -31,6 +31,7 @@ class _SignupViewState extends State<SignupView> {
 
   @override
   void dispose() {
+    _authController.dispose();
     super.dispose();
   }
 
