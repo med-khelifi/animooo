@@ -6,9 +6,9 @@ import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
+import 'package:animooo/core/widgets/custom_text_form_field.dart';
 import 'package:animooo/core/widgets/named_app_logo.dart';
 import 'package:animooo/views/auth/widgets/custom_clickable_text.dart';
-import 'package:animooo/core/widgets/custom_text_form_field.dart';
 import 'package:animooo/views/auth/widgets/forget_password_text.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -90,7 +90,7 @@ class _LoginViewState extends State<LoginView> {
                   Gap(AppHeight.h30),
                   CustomButton(
                     text: AppStrings.login,
-                    onPressed: _authController.login,
+                    onPressed: () => _authController.login(context),
                   ),
                 ],
               ),

@@ -14,7 +14,7 @@ class UserModel {
   @JsonKey(name: "image_path")
   String imagePath;
   @JsonKey(name: "is_verified")
-  String isValid;
+  bool isValid;
   UserModel({
     required this.id,
     required this.firstName,

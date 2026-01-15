@@ -1,4 +1,5 @@
 import 'package:animooo/controllers/auth_controller.dart';
+import 'package:animooo/core/enums/otp_flow.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
@@ -20,6 +21,7 @@ class OtpVerificationView extends StatefulWidget {
 class _OtpVerificationViewState extends State<OtpVerificationView> {
   late AuthController _authController;
   late String _email;
+  late OtpFlow _otpFlow;
   @override
   void initState() {
     super.initState();
@@ -30,7 +32,10 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _email = ModalRoute.of(context)?.settings.arguments as String? ?? "";
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    _email = args["email"];
+    _otpFlow = args["otpFlow"];
   }
 
   @override
@@ -102,10 +107,8 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
               Gap(AppHeight.h40),
               CustomButton(
                 text: AppStrings.confirm,
-                onPressed: () => _authController.verifyOtpCode(
-                  context,
-                  "khelifim440@gmail.com",
-                ),
+                onPressed: () =>
+                    _authController.verifyOtpCode(context, _email, _otpFlow),
               ),
               Align(
                 alignment: Alignment.center,
@@ -122,7 +125,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                         if (seconds == 0) {
                           _authController.resendOtpCode(
                             context,
-                            "khelifim440@gmail.com",
+                            _email,
                             restartTimer: true,
                           );
                         }

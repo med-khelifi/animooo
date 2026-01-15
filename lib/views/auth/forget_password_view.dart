@@ -1,6 +1,6 @@
+import 'package:animooo/controllers/auth_controller.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
-import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
@@ -10,8 +10,21 @@ import 'package:animooo/views/auth/widgets/forget_password_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class ForgetPasswordView extends StatelessWidget {
+class ForgetPasswordView extends StatefulWidget {
   const ForgetPasswordView({super.key});
+
+  @override
+  State<ForgetPasswordView> createState() => _ForgetPasswordViewState();
+}
+
+class _ForgetPasswordViewState extends State<ForgetPasswordView> {
+  late AuthController _authController;
+
+  @override
+  void initState() {
+    super.initState();
+    _authController = AuthController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +54,20 @@ class ForgetPasswordView extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
                 Gap(AppHeight.h58),
-                CustomTextFormField(
-                  label: AppStrings.email,
-                  hint: AppStrings.enterYourEmailAddress,
+                Form(
+                  key: _authController.forgetPasswordFormKey,
+                  child: CustomTextFormField(
+                    label: AppStrings.email,
+                    hint: AppStrings.enterYourEmailAddress,
+                    validator: _authController.validateEmail,
+                    controller: _authController.emailController,
+                  ),
                 ),
                 Gap(AppHeight.h150),
                 CustomButton(
                   text: AppStrings.sendCode,
-                  onPressed: () {
-                    Navigator.pushNamed(context, RoutesNames.otpVerification);
-                  },
+                  onPressed: () =>
+                      _authController.forgetPassword(context: context),
                 ),
               ],
             ),

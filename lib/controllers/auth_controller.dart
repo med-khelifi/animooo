@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
+import 'package:animooo/core/enums/otp_flow.dart';
 import 'package:animooo/core/enums/password_rules.dart';
+import 'package:animooo/core/requests/login_request.dart';
 import 'package:animooo/core/requests/otp_verification_code_request.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
 import 'package:animooo/core/resources/app_routes.dart';
@@ -57,7 +59,7 @@ class AuthController {
     imageSink = imageStreamController.sink;
     imageStream = imageStreamController.stream.asBroadcastStream();
     otpCounterStreamController = StreamController();
-    otpCounterStream = otpCounterStreamController.stream.asBroadcastStream();
+    otpCounterStream = otpCounterStreamController.stream;
     otpCounterSink = otpCounterStreamController.sink;
   }
 
@@ -72,6 +74,7 @@ class AuthController {
   GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> otpFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> forgetPasswordFormKey = GlobalKey<FormState>();
 
   late ImagePickerState _userImageState;
   File? _userImageFile;
@@ -208,7 +211,10 @@ class AuthController {
         Navigator.pushNamed(
           context,
           RoutesNames.otpVerification,
-          arguments: emailController.text.trim(),
+          arguments: {
+            "email": emailController.text.trim(),
+            "otpFlow": OtpFlow.emailVerification,
+          },
         );
       } else {
         String? message = res.error?.errors?.join('\n') ?? res.error?.message;
@@ -217,9 +223,43 @@ class AuthController {
     }
   }
 
-  void login() {
+  void login(BuildContext context) async {
     if (loginFormKey.currentState!.validate()) {
-      // Proceed with signup
+      final authService = services<AuthService>();
+      final res = await authService.login(
+        loginRequest: LoginRequest(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        ),
+      );
+      if (res.isSuccess) {
+        final user = res.data;
+        if (user != null && user.user.isValid) {
+          AppSnackBar.showSuccess(context, message: "go to main");
+        } else {
+          final res = await authService.resendNewOtpCode(
+            email: emailController.text.trim(),
+          );
+          if (res.isSuccess) {
+            AppSnackBar.showSuccess(
+              context,
+              message: res.alert ?? "verification code send",
+            );
+            Navigator.pushNamed(
+              context,
+              RoutesNames.otpVerification,
+              arguments: emailController.text.trim(),
+            );
+          } else {
+            String? message =
+                res.error?.errors?.join('\n') ?? res.error?.message;
+            AppSnackBar.showError(context, message: message ?? "error");
+          }
+        }
+      } else {
+        String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+        AppSnackBar.showError(context, message: message ?? "error");
+      }
     }
   }
 
@@ -277,7 +317,11 @@ class AuthController {
     });
   }
 
-  Future<void> verifyOtpCode(BuildContext context, String email) async {
+  Future<void> verifyOtpCode(
+    BuildContext context,
+    String email,
+    OtpFlow otpFlow,
+  ) async {
     final authService = services<AuthService>();
     final res = await authService.otpVerification(
       otpRequest: OtpVerificationCodeRequest(email: email, code: _otpCode),
@@ -287,6 +331,11 @@ class AuthController {
         context,
         message: res.alert ?? "verification succeeded",
       );
+      if (otpFlow == OtpFlow.emailVerification) {
+        Navigator.pushNamed(context, RoutesNames.login);
+      } else {
+        Navigator.pushNamed(context, RoutesNames.createNewPassword);
+      }
     } else {
       String? message = res.error?.errors?.join('\n') ?? res.error?.message;
       AppSnackBar.showError(context, message: message ?? "error");
@@ -316,5 +365,27 @@ class AuthController {
 
   void onOtpCodeSubmitted(String value) {
     _otpCode = value;
+  }
+
+  void forgetPassword({required BuildContext context}) async {
+    if (forgetPasswordFormKey.currentState?.validate() == true) {
+      final authService = services<AuthService>();
+      final res = await authService.forgetPassword(
+        email: emailController.text.trim(),
+      );
+      if (res.isSuccess) {
+        Navigator.pushNamed(
+          context,
+          RoutesNames.otpVerification,
+          arguments: {
+            "email": emailController.text.trim(),
+            "otpFlow": OtpFlow.forgetPassword,
+          },
+        );
+      } else {
+        String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+        AppSnackBar.showError(context, message: message ?? "error");
+      }
+    }
   }
 }
