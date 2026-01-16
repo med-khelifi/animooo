@@ -1,0 +1,1 @@
+enum OtpFlow { emailVerification, forgetPassword }

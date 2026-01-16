@@ -13,7 +13,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   email: json['email'] as String,
   phone: json['phone'] as String,
   imagePath: json['image_path'] as String,
-  isValid: json['is_verified'] as bool,
+  isValid: json['is_verified'] == 1,
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{

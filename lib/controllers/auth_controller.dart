@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:animooo/core/di/injection.dart';
+import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/enums/otp_flow.dart';
 import 'package:animooo/core/enums/password_rules.dart';
+import 'package:animooo/core/requests/create_new_password_request.dart';
 import 'package:animooo/core/requests/login_request.dart';
 import 'package:animooo/core/requests/otp_verification_code_request.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
@@ -37,9 +39,27 @@ class AuthController {
   late StreamController<int> otpCounterStreamController;
   late Stream<int> otpCounterStream;
   late Sink<int> otpCounterSink;
+  late StreamController<Map<ButtonsLoadingKeys, bool>>
+  loadingMapStreamController;
+  late Stream<Map<ButtonsLoadingKeys, bool>> loadingMapStream;
+  late Sink<Map<ButtonsLoadingKeys, bool>> loadingMapSink;
+  final Map<ButtonsLoadingKeys, bool> _loadingButtonsStatus = {
+    ButtonsLoadingKeys.login: false,
+    ButtonsLoadingKeys.signup: false,
+    ButtonsLoadingKeys.sendCode: false,
+    ButtonsLoadingKeys.confirmCode: false,
+    ButtonsLoadingKeys.changePassword: false,
+    ButtonsLoadingKeys.resendCode: false,
+  };
+
+  void _setLoading(ButtonsLoadingKeys key, bool status) {
+    _loadingButtonsStatus[key] = status;
+    loadingMapSink.add(_loadingButtonsStatus);
+  }
 
   late Timer _otpCodeTimer;
   late String _otpCode;
+
   void _initControllers() {
     emailController = TextEditingController(text: "khelifim440@gmail.com");
     passwordController = TextEditingController(text: "Password@1234");
@@ -50,6 +70,9 @@ class AuthController {
   }
 
   void _initStreams() {
+    loadingMapStreamController = StreamController();
+    loadingMapStream = loadingMapStreamController.stream.asBroadcastStream();
+    loadingMapSink = loadingMapStreamController.sink;
     passwordRulesStreamController = StreamController();
     passwordRulesSink = passwordRulesStreamController.sink;
     passwordRulesStream = passwordRulesStreamController.stream
@@ -75,6 +98,7 @@ class AuthController {
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> otpFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> forgetPasswordFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> createNewPasswordFormKey = GlobalKey<FormState>();
 
   late ImagePickerState _userImageState;
   File? _userImageFile;
@@ -189,8 +213,10 @@ class AuthController {
       imageSink.add((ImagePickerState.error, null));
       return;
     }
-    if (signupFormKey.currentState!.validate()) {
+    if (signupFormKey.currentState!.validate() &&
+        passwordRulesStatus.values.every((element) => element.$2)) {
       final authService = services<AuthService>();
+      _setLoading(ButtonsLoadingKeys.signup, true);
       final res = await authService.register(
         signupRequest: SignupRequestModel(
           firstName: firstNameController.text.trim(),
@@ -201,6 +227,7 @@ class AuthController {
           password: passwordController.text.trim(),
         ),
       );
+      _setLoading(ButtonsLoadingKeys.signup, false);
       if (res.isSuccess) {
         AppSnackBar.showSuccess(
           context,
@@ -226,6 +253,7 @@ class AuthController {
   void login(BuildContext context) async {
     if (loginFormKey.currentState!.validate()) {
       final authService = services<AuthService>();
+      _setLoading(ButtonsLoadingKeys.login, true);
       final res = await authService.login(
         loginRequest: LoginRequest(
           email: emailController.text.trim(),
@@ -233,33 +261,39 @@ class AuthController {
         ),
       );
       if (res.isSuccess) {
-        final user = res.data;
-        if (user != null && user.user.isValid) {
-          AppSnackBar.showSuccess(context, message: "go to main");
-        } else {
+        AppSnackBar.showSuccess(context, message: "go to main");
+      } else {
+        String message =
+            res.error?.errors?.join('\n') ?? res.error?.message ?? "error";
+        if (message.contains("Account not verified")) {
           final res = await authService.resendNewOtpCode(
             email: emailController.text.trim(),
           );
           if (res.isSuccess) {
             AppSnackBar.showSuccess(
               context,
-              message: res.alert ?? "verification code send",
+              message:
+                  res.alert ??
+                  "Account not verified, verification code send to your email",
             );
             Navigator.pushNamed(
               context,
               RoutesNames.otpVerification,
-              arguments: emailController.text.trim(),
+              arguments: {
+                "email": emailController.text.trim(),
+                "otpFlow": OtpFlow.emailVerification,
+              },
             );
           } else {
             String? message =
                 res.error?.errors?.join('\n') ?? res.error?.message;
             AppSnackBar.showError(context, message: message ?? "error");
           }
+        } else {
+          AppSnackBar.showError(context, message: message);
         }
-      } else {
-        String? message = res.error?.errors?.join('\n') ?? res.error?.message;
-        AppSnackBar.showError(context, message: message ?? "error");
       }
+      _setLoading(ButtonsLoadingKeys.login, false);
     }
   }
 
@@ -313,6 +347,7 @@ class AuthController {
       counter--;
       if (counter < 0) {
         timer.cancel();
+        otpCounterSink.close();
       }
     });
   }
@@ -334,7 +369,11 @@ class AuthController {
       if (otpFlow == OtpFlow.emailVerification) {
         Navigator.pushNamed(context, RoutesNames.login);
       } else {
-        Navigator.pushNamed(context, RoutesNames.createNewPassword);
+        Navigator.pushNamed(
+          context,
+          RoutesNames.createNewPassword,
+          arguments: {"email": email},
+        );
       }
     } else {
       String? message = res.error?.errors?.join('\n') ?? res.error?.message;
@@ -381,6 +420,36 @@ class AuthController {
             "email": emailController.text.trim(),
             "otpFlow": OtpFlow.forgetPassword,
           },
+        );
+      } else {
+        String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+        AppSnackBar.showError(context, message: message ?? "error");
+      }
+    }
+  }
+
+  void createNewPassword({
+    required BuildContext context,
+    required String email,
+  }) async {
+    if (createNewPasswordFormKey.currentState?.validate() == true || true) {
+      final authService = services<AuthService>();
+      final res = await authService.createNewPassword(
+        createNewPasswordRequest: CreateNewPasswordRequest(
+          email: email,
+          password: passwordController.text.trim(),
+          confirmPassword: confirmPasswordController.text.trim(),
+        ),
+      );
+      if (res.isSuccess) {
+        AppSnackBar.showSuccess(
+          context,
+          message: res.alert ?? "password updated",
+        );
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          RoutesNames.login,
+          (route) => false,
         );
       } else {
         String? message = res.error?.errors?.join('\n') ?? res.error?.message;

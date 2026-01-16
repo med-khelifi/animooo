@@ -1,4 +1,5 @@
 import 'package:animooo/controllers/auth_controller.dart';
+import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/enums/otp_flow.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
@@ -105,10 +106,20 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                 ),
               ),
               Gap(AppHeight.h40),
-              CustomButton(
-                text: AppStrings.confirm,
-                onPressed: () =>
-                    _authController.verifyOtpCode(context, _email, _otpFlow),
+              StreamBuilder(
+                stream: _authController.loadingMapStream,
+                builder: (context, asyncSnapshot) {
+                  return CustomButton(
+                    text: AppStrings.confirm,
+                    onPressed: () => _authController.verifyOtpCode(
+                      context,
+                      _email,
+                      _otpFlow,
+                    ),
+                    isLoading:
+                        asyncSnapshot.data?[ButtonsLoadingKeys.confirmCode],
+                  );
+                },
               ),
               Align(
                 alignment: Alignment.center,

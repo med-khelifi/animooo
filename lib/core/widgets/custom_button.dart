@@ -18,6 +18,7 @@ class CustomButton extends StatelessWidget {
   final Color? color;
   final Color? textColor;
   final Widget? widget;
+  final bool? isLoading;
 
   const CustomButton({
     super.key,
@@ -33,33 +34,42 @@ class CustomButton extends StatelessWidget {
     this.widget,
     this.elevation,
     this.textFontFamily,
+    this.isLoading,
   });
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      elevation: elevation ,
+      padding: EdgeInsetsGeometry.symmetric(
+        vertical: AppPadding.ph8,
+        horizontal: AppPadding.pw8,
+      ),
+      elevation: elevation,
       height: height ?? AppHeight.h40,
       color: color ?? AppColors.primary,
-      minWidth: width ?? double.infinity,
+      minWidth: isLoading ?? false ? null : width ?? double.infinity,
       onPressed: onPressed,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius ?? AppRadius.r5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CustomText(
-            text: text,
-            fontSize: fontSize ?? AppFontSize.f14,
-            fontWeight: fontWeight ?? FontWeight.w400,
-            color: textColor ?? AppColors.whiteColor,
-            fontFamily: textFontFamily ?? AppFonts.poppins,
-          ),
-          Gap(widget == null ? 0 : AppHeight.h15),
-          if (widget != null) widget!,
-        ],
-      ),
+      shape: isLoading ?? false
+          ? CircleBorder()
+          : RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius ?? AppRadius.r5),
+            ),
+      child: isLoading ?? false
+          ? CircularProgressIndicator(color: AppColors.whiteColor)
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomText(
+                  text: text,
+                  fontSize: fontSize ?? AppFontSize.f14,
+                  fontWeight: fontWeight ?? FontWeight.w400,
+                  color: textColor ?? AppColors.whiteColor,
+                  fontFamily: textFontFamily ?? AppFonts.poppins,
+                ),
+                Gap(widget == null ? 0 : AppHeight.h15),
+                if (widget != null) widget!,
+              ],
+            ),
     );
   }
 }

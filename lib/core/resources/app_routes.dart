@@ -14,7 +14,8 @@ class AppRoutes {
       RoutesNames.forgetPassword: (context) => const ForgetPasswordView(),
       RoutesNames.createNewPassword: (context) => const CreateNewPasswordView(),
       RoutesNames.otpVerification: (context) => const OtpVerificationView(),
-      RoutesNames.noInternetConnection: (context) => const NoInternetConnectionView(),
+      RoutesNames.noInternetConnection: (context) =>
+          const NoInternetConnectionView(),
     };
   }
 }
@@ -26,4 +27,5 @@ class RoutesNames {
   static const String createNewPassword = '/createNewPassword';
   static const String otpVerification = '/otpVerification';
   static const String noInternetConnection = '/noInternetConnection';
+  static const String main = '/main';
 }

@@ -1,4 +1,5 @@
 import 'package:animooo/controllers/auth_controller.dart';
+import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_routes.dart';
@@ -88,9 +89,16 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                   Gap(AppHeight.h30),
-                  CustomButton(
-                    text: AppStrings.login,
-                    onPressed: () => _authController.login(context),
+                  StreamBuilder(
+                    stream: _authController.loadingMapStream,
+                    builder: (context, asyncSnapshot) {
+                      return CustomButton(
+                        text: AppStrings.login,
+                        onPressed: () => _authController.login(context),
+                        isLoading:
+                            asyncSnapshot.data?[ButtonsLoadingKeys.login],
+                      );
+                    },
                   ),
                 ],
               ),

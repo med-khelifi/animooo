@@ -1,12 +1,13 @@
 import 'package:animooo/controllers/auth_controller.dart';
+import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
-import 'package:animooo/views/auth/widgets/create_new_password_app_bar.dart';
 import 'package:animooo/core/widgets/custom_text_form_field.dart';
+import 'package:animooo/views/auth/widgets/create_new_password_app_bar.dart';
 import 'package:animooo/views/auth/widgets/password_rules_list.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -20,6 +21,7 @@ class CreateNewPasswordView extends StatefulWidget {
 
 class _CreateNewPasswordViewState extends State<CreateNewPasswordView> {
   late AuthController _authController;
+  late String _email;
   @override
   void initState() {
     super.initState();
@@ -33,6 +35,14 @@ class _CreateNewPasswordViewState extends State<CreateNewPasswordView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    _email = args?["email"] ?? "";
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CreateNewPasswordAppBar(),
@@ -41,35 +51,53 @@ class _CreateNewPasswordViewState extends State<CreateNewPasswordView> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: AppPadding.pw10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  text: AppStrings.createNewPassword,
-                  fontFamily: AppFonts.otamaEp,
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppFontSize.f20,
-                  color: AppColors.primary,
-                ),
-                Gap(AppHeight.h10),
-                CustomTextFormField(
-                  label: AppStrings.newPassword,
-                  hint: AppStrings.enterYourPassword,
-                  isPassword: true,
-                ),
-                Gap(AppHeight.h8),
-                PasswordRulesList(
-                  passwordRules: _authController.passwordRulesStatus,
-                ),
-                Gap(AppHeight.h16),
-                CustomTextFormField(
-                  label: AppStrings.confirmPassword,
-                  hint: AppStrings.confirmYourPassword,
-                  isPassword: true,
-                ),
-                Gap(AppHeight.h82),
-                CustomButton(text: AppStrings.submit, onPressed: () {}),
-              ],
+            child: Form(
+              key: _authController.createNewPasswordFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: AppStrings.createNewPassword,
+                    fontFamily: AppFonts.otamaEp,
+                    fontWeight: FontWeight.bold,
+                    fontSize: AppFontSize.f20,
+                    color: AppColors.primary,
+                  ),
+                  Gap(AppHeight.h10),
+                  CustomTextFormField(
+                    label: AppStrings.newPassword,
+                    hint: AppStrings.enterYourPassword,
+                    controller: _authController.passwordController,
+                    isPassword: true,
+                  ),
+                  Gap(AppHeight.h8),
+                  PasswordRulesList(
+                    passwordRules: _authController.passwordRulesStatus,
+                  ),
+                  Gap(AppHeight.h16),
+                  CustomTextFormField(
+                    label: AppStrings.confirmPassword,
+                    hint: AppStrings.confirmYourPassword,
+                    controller: _authController.confirmPasswordController,
+                    isPassword: true,
+                  ),
+                  Gap(AppHeight.h82),
+                  StreamBuilder(
+                    stream: _authController.loadingMapStream,
+                    builder: (context, asyncSnapshot) {
+                      return CustomButton(
+                        text: AppStrings.submit,
+                        onPressed: () => _authController.createNewPassword(
+                          context: context,
+                          email: _email,
+                        ),
+                        isLoading: asyncSnapshot
+                            .data?[ButtonsLoadingKeys.changePassword],
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

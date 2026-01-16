@@ -1,5 +1,6 @@
 import 'package:animooo/core/network/api_error.dart';
 import 'package:animooo/core/network/api_service.dart';
+import 'package:animooo/core/requests/create_new_password_request.dart';
 import 'package:animooo/core/requests/login_request.dart';
 import 'package:animooo/core/requests/otp_verification_code_request.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
@@ -169,6 +170,43 @@ class AuthService {
       final message = data["message"].toString();
 
       return Response.success(true, alert: message);
+    } catch (e) {
+      return Response.failure(ApiError(message: e.toString()));
+    }
+  }
+
+  Future<Response<UserWithTokensModel>> createNewPassword({
+    required CreateNewPasswordRequest createNewPasswordRequest,
+  }) async {
+    try {
+      var result = await _apiService.post(
+        endpoint: '/create_new_possword',
+        data: createNewPasswordRequest.toJson(),
+      );
+      if (result is ApiError) {
+        return Response.failure(result);
+      }
+      // data section from response
+      final data = result.data;
+
+      if (data == null || data is! Map) {
+        return Response.failure(ApiError(message: 'Invalid backend response'));
+      }
+      int code = int.tryParse(data["statusCode"].toString()) ?? 500;
+      if (code < 200 || code > 299) {
+        return Response.failure(ApiError(message: "Unknown backend error"));
+      }
+      final message = data["message"].toString();
+      // extract user data
+      final userData = UserWithTokensModel.fromJson(
+        data as Map<String, dynamic>,
+      );
+
+      if (userData == null) {
+        return Response.failure(ApiError(message: "Invalid user object"));
+      }
+
+      return Response.success(userData, alert: message);
     } catch (e) {
       return Response.failure(ApiError(message: e.toString()));
     }
