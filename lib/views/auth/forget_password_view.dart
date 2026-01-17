@@ -68,12 +68,15 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
                 StreamBuilder(
                   stream: _authController.loadingMapStream,
                   builder: (context, asyncSnapshot) {
-                    return CustomButton(
-                      text: AppStrings.sendCode,
-                      onPressed: () =>
-                          _authController.forgetPassword(context: context),
-                      isLoading:
-                          asyncSnapshot.data?[ButtonsLoadingKeys.sendCode],
+                    return Align(
+                      alignment: AlignmentGeometry.center,
+                      child: CustomButton(
+                        text: AppStrings.sendCode,
+                        onPressed: () =>
+                            _authController.forgetPassword(context: context),
+                        isLoading:
+                            asyncSnapshot.data?[ButtonsLoadingKeys.sendCode],
+                      ),
                     );
                   },
                 ),

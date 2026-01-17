@@ -109,47 +109,60 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
               StreamBuilder(
                 stream: _authController.loadingMapStream,
                 builder: (context, asyncSnapshot) {
-                  return CustomButton(
-                    text: AppStrings.confirm,
-                    onPressed: () => _authController.verifyOtpCode(
-                      context,
-                      _email,
-                      _otpFlow,
+                  return Align(
+                    alignment: AlignmentGeometry.center,
+                    child: CustomButton(
+                      text: AppStrings.confirm,
+                      onPressed: () => _authController.verifyOtpCode(
+                        context,
+                        _email,
+                        _otpFlow,
+                      ),
+                      isLoading:
+                          asyncSnapshot.data?[ButtonsLoadingKeys.confirmCode],
                     ),
-                    isLoading:
-                        asyncSnapshot.data?[ButtonsLoadingKeys.confirmCode],
                   );
                 },
               ),
               Align(
                 alignment: Alignment.center,
-                child: StreamBuilder<int>(
-                  stream: _authController.otpCounterStream,
-                  builder: (context, snapshot) {
-                    final seconds = snapshot.data ?? 30; // start from 30
-
-                    final formatted =
-                        "in 00:${seconds.toString().padLeft(2, '0')}";
-
-                    return GestureDetector(
-                      onTap: () {
-                        if (seconds == 0) {
-                          _authController.resendOtpCode(
-                            context,
-                            _email,
-                            restartTimer: true,
-                          );
-                        }
+                child: StreamBuilder(
+                  stream: _authController.loadingMapStream,
+                  builder: (context, asyncSnapshotLoading) {
+                    return StreamBuilder<int>(
+                      stream: _authController.otpCounterStream,
+                      builder: (context, snapshot) {
+                        final seconds = snapshot.data ?? 30;
+                        final formatted =
+                            "in 00:${seconds.toString().padLeft(2, '0')}";
+                        return asyncSnapshotLoading.data?[ButtonsLoadingKeys
+                                    .resendCode] ==
+                                true
+                            ? CircularProgressIndicator(
+                                color: AppColors.secondary,
+                                trackGap: 1,
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  if (seconds == 0) {
+                                    _authController.resendOtpCode(
+                                      context,
+                                      _email,
+                                      restartTimer: true,
+                                    );
+                                  }
+                                },
+                                child: CustomText(
+                                  text: seconds == 0
+                                      ? AppStrings.resendCode
+                                      : "${AppStrings.resendCode} $formatted",
+                                  fontFamily: AppFonts.poppins,
+                                  fontSize: AppFontSize.f12,
+                                  color: AppColors.secondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              );
                       },
-                      child: CustomText(
-                        text: seconds == 0
-                            ? AppStrings.resendCode
-                            : "${AppStrings.resendCode} $formatted",
-                        fontFamily: AppFonts.poppins,
-                        fontSize: AppFontSize.f12,
-                        color: AppColors.secondary,
-                        fontWeight: FontWeight.w500,
-                      ),
                     );
                   },
                 ),

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
@@ -48,7 +47,7 @@ class AuthController {
     ButtonsLoadingKeys.signup: false,
     ButtonsLoadingKeys.sendCode: false,
     ButtonsLoadingKeys.confirmCode: false,
-    ButtonsLoadingKeys.changePassword: false,
+    ButtonsLoadingKeys.createNewPassword: false,
     ButtonsLoadingKeys.resendCode: false,
   };
 
@@ -57,7 +56,7 @@ class AuthController {
     loadingMapSink.add(_loadingButtonsStatus);
   }
 
-  late Timer _otpCodeTimer;
+
   late String _otpCode;
 
   void _initControllers() {
@@ -81,7 +80,7 @@ class AuthController {
     imageStreamController = StreamController();
     imageSink = imageStreamController.sink;
     imageStream = imageStreamController.stream.asBroadcastStream();
-    otpCounterStreamController = StreamController();
+    otpCounterStreamController = StreamController.broadcast();
     otpCounterStream = otpCounterStreamController.stream;
     otpCounterSink = otpCounterStreamController.sink;
   }
@@ -206,6 +205,9 @@ class AuthController {
   }
 
   void signup({required BuildContext context}) async {
+    if (_loadingButtonsStatus[ButtonsLoadingKeys.signup] == true) {
+      return;
+    }
     if (_userImageState == ImagePickerState.none) {
       _userImageState = ImagePickerState.error;
     }
@@ -251,6 +253,9 @@ class AuthController {
   }
 
   void login(BuildContext context) async {
+    if (_loadingButtonsStatus[ButtonsLoadingKeys.login] == true) {
+      return;
+    }
     if (loginFormKey.currentState!.validate()) {
       final authService = services<AuthService>();
       _setLoading(ButtonsLoadingKeys.login, true);
@@ -328,6 +333,7 @@ class AuthController {
     imageStreamController?.close();
     passwordRulesStreamController?.close();
     otpCounterStreamController?.close();
+    loadingMapStreamController?.close();
   }
 
   String? validateOtpCode(String? value) {
@@ -342,12 +348,11 @@ class AuthController {
 
   void startResendCodeTimer() {
     int counter = 30;
-    _otpCodeTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      Timer.periodic(Duration(seconds: 1), (timer) {
       otpCounterSink.add(counter);
       counter--;
       if (counter < 0) {
         timer.cancel();
-        otpCounterSink.close();
       }
     });
   }
@@ -357,10 +362,15 @@ class AuthController {
     String email,
     OtpFlow otpFlow,
   ) async {
+    if (_loadingButtonsStatus[ButtonsLoadingKeys.confirmCode] == true) {
+      return;
+    }
     final authService = services<AuthService>();
+    _setLoading(ButtonsLoadingKeys.confirmCode, true);
     final res = await authService.otpVerification(
       otpRequest: OtpVerificationCodeRequest(email: email, code: _otpCode),
     );
+    _setLoading(ButtonsLoadingKeys.confirmCode, false);
     if (res.isSuccess) {
       AppSnackBar.showSuccess(
         context,
@@ -386,8 +396,13 @@ class AuthController {
     String email, {
     bool restartTimer = false,
   }) async {
+    if (_loadingButtonsStatus[ButtonsLoadingKeys.resendCode] == true) {
+      return;
+    }
     final authService = services<AuthService>();
+    _setLoading(ButtonsLoadingKeys.resendCode, true);
     final res = await authService.resendNewOtpCode(email: email);
+    _setLoading(ButtonsLoadingKeys.resendCode, false);
     if (res.isSuccess) {
       AppSnackBar.showSuccess(
         context,
@@ -407,11 +422,16 @@ class AuthController {
   }
 
   void forgetPassword({required BuildContext context}) async {
+    if (_loadingButtonsStatus[ButtonsLoadingKeys.sendCode] == true) {
+      return;
+    }
     if (forgetPasswordFormKey.currentState?.validate() == true) {
       final authService = services<AuthService>();
+      _setLoading(ButtonsLoadingKeys.sendCode, true);
       final res = await authService.forgetPassword(
         email: emailController.text.trim(),
       );
+      _setLoading(ButtonsLoadingKeys.sendCode, false);
       if (res.isSuccess) {
         Navigator.pushNamed(
           context,
@@ -432,8 +452,13 @@ class AuthController {
     required BuildContext context,
     required String email,
   }) async {
-    if (createNewPasswordFormKey.currentState?.validate() == true || true) {
+    if (_loadingButtonsStatus[ButtonsLoadingKeys.createNewPassword] == true) {
+      return;
+    }
+    if (createNewPasswordFormKey.currentState?.validate() == true   &&
+        passwordRulesStatus.values.every((element) => element.$2)) {
       final authService = services<AuthService>();
+      _setLoading(ButtonsLoadingKeys.createNewPassword, true);
       final res = await authService.createNewPassword(
         createNewPasswordRequest: CreateNewPasswordRequest(
           email: email,
@@ -441,6 +466,7 @@ class AuthController {
           confirmPassword: confirmPasswordController.text.trim(),
         ),
       );
+      _setLoading(ButtonsLoadingKeys.createNewPassword, false);
       if (res.isSuccess) {
         AppSnackBar.showSuccess(
           context,

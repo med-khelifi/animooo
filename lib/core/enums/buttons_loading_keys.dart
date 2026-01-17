@@ -3,6 +3,6 @@ enum ButtonsLoadingKeys {
   signup,
   sendCode,
   confirmCode,
-  changePassword,
+  createNewPassword,
   resendCode,
 }

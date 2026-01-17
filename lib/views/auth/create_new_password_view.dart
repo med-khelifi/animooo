@@ -68,31 +68,43 @@ class _CreateNewPasswordViewState extends State<CreateNewPasswordView> {
                     label: AppStrings.newPassword,
                     hint: AppStrings.enterYourPassword,
                     controller: _authController.passwordController,
+                    onChange: _authController.onPasswordChange,
                     isPassword: true,
                   ),
                   Gap(AppHeight.h8),
-                  PasswordRulesList(
-                    passwordRules: _authController.passwordRulesStatus,
+                  StreamBuilder(
+                    stream: _authController.passwordRulesStream,
+                    builder: (context, asyncSnapshot) {
+                      return PasswordRulesList(
+                        passwordRules:
+                            asyncSnapshot.data ??
+                            _authController.passwordRulesStatus,
+                      );
+                    },
                   ),
                   Gap(AppHeight.h16),
                   CustomTextFormField(
                     label: AppStrings.confirmPassword,
                     hint: AppStrings.confirmYourPassword,
                     controller: _authController.confirmPasswordController,
+                    validator: _authController.validateConfirmPassword,
                     isPassword: true,
                   ),
                   Gap(AppHeight.h82),
                   StreamBuilder(
                     stream: _authController.loadingMapStream,
                     builder: (context, asyncSnapshot) {
-                      return CustomButton(
-                        text: AppStrings.submit,
-                        onPressed: () => _authController.createNewPassword(
-                          context: context,
-                          email: _email,
+                      return Align(
+                        alignment: AlignmentGeometry.center,
+                        child: CustomButton(
+                          text: AppStrings.submit,
+                          onPressed: () => _authController.createNewPassword(
+                            context: context,
+                            email: _email,
+                          ),
+                          isLoading: asyncSnapshot
+                              .data?[ButtonsLoadingKeys.createNewPassword],
                         ),
-                        isLoading: asyncSnapshot
-                            .data?[ButtonsLoadingKeys.changePassword],
                       );
                     },
                   ),
