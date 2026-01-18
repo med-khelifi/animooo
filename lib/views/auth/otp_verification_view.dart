@@ -85,8 +85,11 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                           borderRadius: BorderRadius.circular(AppRadius.r10),
                           focusedBorderColor: AppColors.primary,
                           onSubmit: (value) {
+                            _authController.onOtpCodeSubmitted(value);
                             field.didChange(value);
                             field.validate();
+                          },
+                          onCodeChanged: (value) {
                             _authController.onOtpCodeSubmitted(value);
                           },
                         ),

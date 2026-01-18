@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
@@ -16,6 +17,8 @@ import 'package:animooo/core/widgets/app_snackbar.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
 import 'package:animooo/services/auth_service.dart';
 import 'package:flutter/widgets.dart';
+
+//TODO fix otp verification code validation
 
 class AuthController {
   late TextEditingController emailController;
@@ -56,8 +59,7 @@ class AuthController {
     loadingMapSink.add(_loadingButtonsStatus);
   }
 
-
-  late String _otpCode;
+  String _otpCode = "";
 
   void _initControllers() {
     emailController = TextEditingController(text: "khelifim440@gmail.com");
@@ -337,18 +339,19 @@ class AuthController {
   }
 
   String? validateOtpCode(String? value) {
-    if (value == null) {
-      return "please enter otp code";
-    } else if (!value.contains(RegExp(r'^[0-9]+$'))) {
-      return "only numbers allowed";
-    }
+    if (_otpCode.isEmpty) return "OTP is required";
 
+    if (_otpCode.length != 5) return "OTP must be 5 digits";
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(_otpCode)) {
+      return "OTP must contain only numbers";
+    }
     return null;
   }
 
   void startResendCodeTimer() {
     int counter = 30;
-      Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(Duration(seconds: 1), (timer) {
       otpCounterSink.add(counter);
       counter--;
       if (counter < 0) {
@@ -363,6 +366,9 @@ class AuthController {
     OtpFlow otpFlow,
   ) async {
     if (_loadingButtonsStatus[ButtonsLoadingKeys.confirmCode] == true) {
+      return;
+    }
+    if (otpFormKey.currentState?.validate() == false) {
       return;
     }
     final authService = services<AuthService>();
@@ -455,7 +461,7 @@ class AuthController {
     if (_loadingButtonsStatus[ButtonsLoadingKeys.createNewPassword] == true) {
       return;
     }
-    if (createNewPasswordFormKey.currentState?.validate() == true   &&
+    if (createNewPasswordFormKey.currentState?.validate() == true &&
         passwordRulesStatus.values.every((element) => element.$2)) {
       final authService = services<AuthService>();
       _setLoading(ButtonsLoadingKeys.createNewPassword, true);
