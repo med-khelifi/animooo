@@ -51,7 +51,7 @@ class _AnimooState extends State<Animoo> {
       designSize: const Size(375, 812),
       child: MaterialApp(
         scaffoldMessengerKey: AppSnackBar.messengerKey,
-        initialRoute: RoutesNames.login,
+        initialRoute: RoutesNames.main,
         theme: ThemeData(
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(

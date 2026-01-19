@@ -4,6 +4,7 @@ import 'package:animooo/views/auth/login_view.dart';
 import 'package:animooo/views/auth/otp_verification_view.dart';
 import 'package:animooo/views/auth/signup_view.dart';
 import 'package:animooo/views/connection/no_internet_connection_view.dart';
+import 'package:animooo/views/main/main.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
@@ -16,6 +17,7 @@ class AppRoutes {
       RoutesNames.otpVerification: (context) => const OtpVerificationView(),
       RoutesNames.noInternetConnection: (context) =>
           const NoInternetConnectionView(),
+      RoutesNames.main: (context) => const Main(),
     };
   }
 }

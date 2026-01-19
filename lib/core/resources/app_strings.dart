@@ -69,4 +69,10 @@ class AppStrings {
   static const String passwordsDoNotMatch = 'Passwords do not match';
   static const String takeImageFromGallery = "Take image from gallery";
   static const String takeImageFromCamera = "Take image from camera";
+
+  static const String home = "Home";
+  static const String search = "Search";
+  static const String category = "Category";
+  static const String animal = "Animal";
+  static const String me = "Me";
 }
