@@ -17,6 +17,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChange,
     this.controller,
     this.keyboardType,
+    this.maxLines,
   });
   final bool? isPassword;
   final String? label;
@@ -26,6 +27,8 @@ class CustomTextFormField extends StatefulWidget {
   final void Function(String)? onChange;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+
+  final int? maxLines;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -54,6 +57,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           obscureText: widget.isPassword ?? false ? !isVisible : false,
           obscuringCharacter: widget.obscuringCharacter ?? '*',
           keyboardType: widget.keyboardType,
+          maxLines: widget.maxLines ?? 1,
           decoration: InputDecoration(
             suffixIcon: widget.isPassword == true
                 ? InkWell(

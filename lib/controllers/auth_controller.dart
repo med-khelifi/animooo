@@ -18,8 +18,6 @@ import 'package:animooo/core/widgets/bottom_sheets.dart';
 import 'package:animooo/services/auth_service.dart';
 import 'package:flutter/widgets.dart';
 
-//TODO fix otp verification code validation
-
 class AuthController {
   late TextEditingController emailController;
   late TextEditingController passwordController;

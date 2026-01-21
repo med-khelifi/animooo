@@ -8,4 +8,6 @@ class AppAssets {
   static const String animalNavSVG = '${base}svg/navbar_icons/animal.svg';
   static const String meNavSVG = '${base}svg/navbar_icons/me.svg';
   static const String searchNavSVG = '${base}svg/navbar_icons/search.svg';
+
+  static String globePlanet = "assets/images/svg/globe_planet.svg";
 }

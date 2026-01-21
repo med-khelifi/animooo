@@ -1,3 +1,4 @@
+import "package:animooo/controllers/main_view_controller.dart";
 import "package:animooo/views/main/animal_view.dart";
 import "package:animooo/views/main/category_view.dart";
 import "package:animooo/views/main/home_view.dart";
@@ -14,30 +15,37 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  int _currentIndex = 0;
+  late MainViewController _mainViewController;
+  @override
+  void initState() {
+    super.initState();
+    _mainViewController = MainViewController();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: MainViewBottomNavbar(
-        currentIndex: _currentIndex,
-        onTap: (value) {
-          setState(() {
-            _currentIndex = value;
-          });
-        },
-      ),
-      body: SafeArea(
-        child: IndexedStack(
-          index: _currentIndex,
-          children: [
-            HomeView(),
-            SearchView(),
-            CategoryView(),
-            AnimalView(),
-            ProfileView(),
-          ],
-        ),
-      ),
+    return StreamBuilder<int>(
+      stream: _mainViewController.currentIndexStream,
+      builder: (context, asyncSnapshot) {
+        return Scaffold(
+          bottomNavigationBar: MainViewBottomNavbar(
+            currentIndex: asyncSnapshot.data ?? 0,
+            onTap: _mainViewController.onChangeIndex,
+          ),
+          body: SafeArea(
+            child: IndexedStack(
+              index: asyncSnapshot.data ?? 0,
+              children: [
+                HomeView(),
+                SearchView(),
+                CategoryView(),
+                AnimalView(),
+                ProfileView(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
