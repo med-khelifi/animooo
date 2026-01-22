@@ -21,7 +21,7 @@ class SelectImageBox extends StatelessWidget {
           radius: Radius.circular(AppRadius.r10),
         ),
         child: SizedBox(
-          height: AppHeight.h130,
+          height: AppHeight.h150,
           width: double.infinity,
           child: Center(
             child: Column(
@@ -46,4 +46,3 @@ class SelectImageBox extends StatelessWidget {
     );
   }
 }
-

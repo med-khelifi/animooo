@@ -12,6 +12,7 @@ import 'package:animooo/core/requests/otp_verification_code_request.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
 import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
+import 'package:animooo/core/storge/storge_helper.dart';
 import 'package:animooo/core/utils/image_picker_utils.dart';
 import 'package:animooo/core/widgets/app_snackbar.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
@@ -266,7 +267,14 @@ class AuthController {
         ),
       );
       if (res.isSuccess) {
-        AppSnackBar.showSuccess(context, message: "go to main");
+        final storageHelper = services<StorageHelper>();
+        storageHelper.saveAccessToken(res.data!.accessToken);
+        storageHelper.saveRefreshToken(res.data!.refreshToken);
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          RoutesNames.main,
+          (route) => false,
+        );
       } else {
         String message =
             res.error?.errors?.join('\n') ?? res.error?.message ?? "error";

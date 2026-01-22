@@ -15,11 +15,13 @@ class MainViewBottomNavbar extends StatelessWidget {
   final int currentIndex;
   @override
   Widget build(BuildContext context) {
+    final selectedColor = AppColors.primary;
+    final unSelectedColor = AppColors.secondary;
     return BottomNavigationBar(
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: AppColors.secondary,
+      selectedItemColor: selectedColor,
+      unselectedItemColor: unSelectedColor,
       onTap: onTap,
       currentIndex: currentIndex,
       items: [
@@ -31,9 +33,7 @@ class MainViewBottomNavbar extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               AppAssets.homeNavSVG,
-              color: currentIndex == 0
-                  ? AppColors.primary
-                  : AppColors.secondary,
+              color: currentIndex == 0 ? selectedColor : unSelectedColor,
             ),
           ),
           label: AppStrings.home,
@@ -46,9 +46,7 @@ class MainViewBottomNavbar extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               AppAssets.searchNavSVG,
-              color: currentIndex == 1
-                  ? AppColors.primary
-                  : AppColors.secondary,
+              color: currentIndex == 1 ? selectedColor : unSelectedColor,
             ),
           ),
           label: AppStrings.search,
@@ -61,9 +59,7 @@ class MainViewBottomNavbar extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               AppAssets.categoryNavSVG,
-              color: currentIndex == 2
-                  ? AppColors.primary
-                  : AppColors.secondary,
+              color: currentIndex == 2 ? selectedColor : unSelectedColor,
             ),
           ),
           label: AppStrings.category,
@@ -76,9 +72,7 @@ class MainViewBottomNavbar extends StatelessWidget {
             ),
             child: SvgPicture.asset(
               AppAssets.animalNavSVG,
-              color: currentIndex == 3
-                  ? AppColors.primary
-                  : AppColors.secondary,
+              color: currentIndex == 3 ? selectedColor : unSelectedColor,
             ),
           ),
           label: AppStrings.animal,
@@ -93,9 +87,7 @@ class MainViewBottomNavbar extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: AppPadding.pw8),
               child: SvgPicture.asset(
                 AppAssets.meNavSVG,
-                color: currentIndex == 4
-                    ? AppColors.primary
-                    : AppColors.secondary,
+                color: currentIndex == 4 ? selectedColor : unSelectedColor,
               ),
             ),
           ),

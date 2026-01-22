@@ -5,24 +5,54 @@ import 'package:animooo/views/auth/otp_verification_view.dart';
 import 'package:animooo/views/auth/signup_view.dart';
 import 'package:animooo/views/connection/no_internet_connection_view.dart';
 import 'package:animooo/views/main/main.dart';
+import 'package:animooo/views/splash_view.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
-  static Map<String, WidgetBuilder> getRoutes() {
-    return {
-      RoutesNames.login: (context) => const LoginView(),
-      RoutesNames.signup: (context) => const SignupView(),
-      RoutesNames.forgetPassword: (context) => const ForgetPasswordView(),
-      RoutesNames.createNewPassword: (context) => const CreateNewPasswordView(),
-      RoutesNames.otpVerification: (context) => const OtpVerificationView(),
-      RoutesNames.noInternetConnection: (context) =>
-          const NoInternetConnectionView(),
-      RoutesNames.main: (context) => const Main(),
-    };
+  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case RoutesNames.splash:
+        return MaterialPageRoute(builder: (_) => const SplashView());
+      case RoutesNames.login:
+        return MaterialPageRoute(builder: (_) => const LoginView());
+      case RoutesNames.signup:
+        return MaterialPageRoute(builder: (_) => const SignupView());
+
+      case RoutesNames.forgetPassword:
+        return MaterialPageRoute(builder: (_) => const ForgetPasswordView());
+
+      case RoutesNames.createNewPassword:
+        return MaterialPageRoute(builder: (_) => const CreateNewPasswordView());
+
+      case RoutesNames.otpVerification:
+        return MaterialPageRoute(builder: (_) => const OtpVerificationView());
+
+      case RoutesNames.noInternetConnection:
+        return MaterialPageRoute(
+          builder: (_) => const NoInternetConnectionView(),
+        );
+
+      case RoutesNames.main:
+        return MaterialPageRoute(builder: (_) => const Main());
+
+      default:
+        return _undefinedRoute();
+    }
+  }
+
+  static Route<dynamic> _undefinedRoute() {
+    return MaterialPageRoute(
+      builder: (_) => const Scaffold(
+        body: Center(
+          child: Text('Route not found', style: TextStyle(fontSize: 18)),
+        ),
+      ),
+    );
   }
 }
 
 class RoutesNames {
+  static const String splash = '/';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String forgetPassword = '/forgetPassword';

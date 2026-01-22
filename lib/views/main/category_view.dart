@@ -27,54 +27,73 @@ class _CategoryViewState extends State<CategoryView> {
   }
 
   @override
+  void dispose() {
+    _mainViewController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: AppPadding.pw18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText(
-              text: "Add New Category",
-              color: AppColors.primary,
-              fontSize: AppFontSize.f24,
-              fontFamily: AppFonts.otamaEp,
-            ),
-            Gap(AppHeight.h13),
-            CategoryUserInfo(),
-            Gap(AppHeight.h13),
-            CustomTextFormField(
-              hint: "Enter Category Name",
-              label: "Category Name",
-            ),
-            Gap(AppHeight.h6),
-            CustomTextFormField(
-              hint: "Enter Category description",
-              label: "Category description",
-              maxLines: 3,
-            ),
-            Gap(AppHeight.h13),
-            CustomText(
-              text: "Upload Image For Your Category",
-              color: AppColors.secondary,
-              fontSize: AppFontSize.f14,
-              fontFamily: AppFonts.poppins,
-            ),
-            Gap(AppHeight.h6),
-            StreamBuilder(
-              stream: _mainViewController.imageStream,
-              builder: (context, asyncSnapshot) {
-                return HandelImageUi(
-                  imageState: asyncSnapshot.data?.$1 ?? ImagePickerState.none,
-                  file: asyncSnapshot.data?.$2,
-                  onTap: () => _mainViewController.onTakeImagePressed(context),
-                );
-              },
-            ),
-            Gap(AppHeight.h30),
-            CustomButton(text: "Add Category", onPressed: () {}),
-          ],
+        child: Form(
+          key: _mainViewController.categoryFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                text: "Add New Category",
+                color: AppColors.primary,
+                fontSize: AppFontSize.f24,
+                fontFamily: AppFonts.otamaEp,
+              ),
+              Gap(AppHeight.h13),
+              CategoryUserInfo(),
+              Gap(AppHeight.h13),
+              CustomTextFormField(
+                hint: "Enter Category Name",
+                label: "Category Name",
+                controller: _mainViewController.categoryNameController,
+                validator: _mainViewController.validateCategoryName,
+              ),
+              Gap(AppHeight.h6),
+              CustomTextFormField(
+                hint: "Enter Category description",
+                label: "Category description",
+                controller: _mainViewController.categoryDescriptionController,
+                validator: _mainViewController.validateCategoryDescription,
+                maxLines: 3,
+              ),
+              Gap(AppHeight.h13),
+              CustomText(
+                text: "Upload Image For Your Category",
+                color: AppColors.secondary,
+                fontSize: AppFontSize.f14,
+                fontFamily: AppFonts.poppins,
+              ),
+              Gap(AppHeight.h6),
+              StreamBuilder(
+                stream: _mainViewController.categoryImageStream,
+                builder: (context, asyncSnapshot) {
+                  return HandelImageUi(
+                    imageState: asyncSnapshot.data?.$1 ?? ImagePickerState.none,
+                    file: asyncSnapshot.data?.$2,
+                    onTap: () => _mainViewController.onTakeImagePressed(
+                      context,
+                      ImageTarget.category,
+                    ),
+                  );
+                },
+              ),
+              Gap(AppHeight.h30),
+              CustomButton(
+                text: "Add Category",
+                onPressed: _mainViewController.onAddCategoryPressed,
+              ),
+            ],
+          ),
         ),
       ),
     );

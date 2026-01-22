@@ -13,7 +13,6 @@ class NamedAppLogo extends StatelessWidget {
     return Column(
       children: [
         const AppLogo(),
-        SizedBox(height: AppHeight.h10),
         CustomText(
           text: AppStrings.appName,
           fontSize: AppFontSize.f12,
