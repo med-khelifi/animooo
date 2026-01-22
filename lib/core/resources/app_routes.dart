@@ -10,33 +10,26 @@ import 'package:flutter/material.dart';
 
 class AppRoutes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case RoutesNames.splash:
-        return MaterialPageRoute(builder: (_) => const SplashView());
-      case RoutesNames.login:
-        return MaterialPageRoute(builder: (_) => const LoginView());
-      case RoutesNames.signup:
-        return MaterialPageRoute(builder: (_) => const SignupView());
-
-      case RoutesNames.forgetPassword:
-        return MaterialPageRoute(builder: (_) => const ForgetPasswordView());
-
-      case RoutesNames.createNewPassword:
-        return MaterialPageRoute(builder: (_) => const CreateNewPasswordView());
-
-      case RoutesNames.otpVerification:
-        return MaterialPageRoute(builder: (_) => const OtpVerificationView());
-
-      case RoutesNames.noInternetConnection:
-        return MaterialPageRoute(
-          builder: (_) => const NoInternetConnectionView(),
-        );
-
-      case RoutesNames.main:
-        return MaterialPageRoute(builder: (_) => const Main());
-
-      default:
-        return _undefinedRoute();
+    if (settings.name == RoutesNames.splash.route) {
+      return MaterialPageRoute(builder: (_) => const SplashView());
+    } else if (settings.name == RoutesNames.login.route) {
+      return MaterialPageRoute(builder: (_) => const LoginView());
+    } else if (settings.name == RoutesNames.signup.route) {
+      return MaterialPageRoute(builder: (_) => const SignupView());
+    } else if (settings.name == RoutesNames.forgetPassword.route) {
+      return MaterialPageRoute(builder: (_) => const ForgetPasswordView());
+    } else if (settings.name == RoutesNames.createNewPassword.route) {
+      return MaterialPageRoute(builder: (_) => const CreateNewPasswordView());
+    } else if (settings.name == RoutesNames.otpVerification.route) {
+      return MaterialPageRoute(builder: (_) => const OtpVerificationView());
+    } else if (settings.name == RoutesNames.noInternetConnection.route) {
+      return MaterialPageRoute(
+        builder: (_) => const NoInternetConnectionView(),
+      );
+    } else if (settings.name == RoutesNames.main.route) {
+      return MaterialPageRoute(builder: (_) => const Main());
+    } else {
+      return _undefinedRoute();
     }
   }
 
@@ -51,13 +44,18 @@ class AppRoutes {
   }
 }
 
-class RoutesNames {
-  static const String splash = '/';
-  static const String login = '/login';
-  static const String signup = '/signup';
-  static const String forgetPassword = '/forgetPassword';
-  static const String createNewPassword = '/createNewPassword';
-  static const String otpVerification = '/otpVerification';
-  static const String noInternetConnection = '/noInternetConnection';
-  static const String main = '/main';
+enum RoutesNames {
+  splash('/'),
+  login('/login'),
+  signup('/signup'),
+  forgetPassword('/forgetPassword'),
+  createNewPassword('/createNewPassword'),
+  otpVerification('/otpVerification'),
+  noInternetConnection('/noInternetConnection'),
+  main('/main'),
+  mainHomeAllCategories('/main/home/allCategories');
+
+  final String route;
+
+  const RoutesNames(this.route);
 }

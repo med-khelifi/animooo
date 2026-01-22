@@ -2,6 +2,7 @@ import 'package:animooo/controllers/auth_controller.dart';
 import 'package:animooo/core/enums/buttons_loading_keys.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
+import 'package:animooo/core/resources/app_navigation.dart';
 import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
@@ -46,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
             text: AppStrings.doNotHaveAccount,
             clickableText: AppStrings.signupNow,
             onTap: () {
-              Navigator.pushNamed(context, RoutesNames.signup);
+              AppNavigation.push(RoutesNames.signup);
             },
           ),
         ),
@@ -83,10 +84,7 @@ class _LoginViewState extends State<LoginView> {
                     isPassword: true,
                   ),
                   ForgetPasswordText(
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      RoutesNames.forgetPassword,
-                    ),
+                    onTap: () => AppNavigation.push(RoutesNames.forgetPassword),
                   ),
                   Gap(AppHeight.h30),
                   StreamBuilder(

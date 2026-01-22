@@ -1,5 +1,6 @@
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/resources/app_colors.dart';
+import 'package:animooo/core/resources/app_navigation.dart';
 import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/storge/storge_helper.dart';
@@ -62,9 +63,9 @@ class _SplashViewState extends State<SplashView> {
     if (!mounted) return;
 
     if (token != null && token.isNotEmpty) {
-      Navigator.pushReplacementNamed(context, RoutesNames.main);
+      AppNavigation.pushAndRemoveUntil(RoutesNames.main);
     } else {
-      Navigator.pushReplacementNamed(context, RoutesNames.login);
+      AppNavigation.pushAndRemoveUntil(RoutesNames.login);
     }
   }
 

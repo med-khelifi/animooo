@@ -1,3 +1,4 @@
+import 'package:animooo/controllers/main_view_controller.dart';
 import 'package:animooo/core/storge/storge_helper.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -23,5 +24,8 @@ void setupInjection() {
   );
   services.registerLazySingleton<StorageHelper>(
     () => StorageHelper(services<FlutterSecureStorage>()),
+  );
+  services.registerLazySingleton<MainViewController>(
+    () => MainViewController(),
   );
 }

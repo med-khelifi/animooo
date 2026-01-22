@@ -15,6 +15,7 @@ class MainViewController {
   // Forms
   GlobalKey<FormState> categoryFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> animalFormKey = GlobalKey<FormState>();
+  GlobalKey<NavigatorState> homeNavigationKey = GlobalKey<NavigatorState>();
 
   // Image Streams
   late StreamController<(ImagePickerState state, File? imageFile)>
@@ -66,6 +67,9 @@ class MainViewController {
   }
 
   void onChangeIndex(int index) {
+    if (index == 0) {
+      goBackToHome();
+    }
     _currentIndexController.add(index);
   }
 
@@ -137,5 +141,13 @@ class MainViewController {
     animalDescriptionController.dispose();
     animalPriceController.dispose();
     animalCategoryController.dispose();
+  }
+
+  void goBackToHome() {
+    homeNavigationKey.currentState?.popUntil((route) => route.isFirst);
+  }
+
+  void goToAddCategory() {
+    _currentIndexController.add(2);
   }
 }

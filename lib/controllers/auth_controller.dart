@@ -10,6 +10,7 @@ import 'package:animooo/core/requests/create_new_password_request.dart';
 import 'package:animooo/core/requests/login_request.dart';
 import 'package:animooo/core/requests/otp_verification_code_request.dart';
 import 'package:animooo/core/requests/signup_request_model.dart';
+import 'package:animooo/core/resources/app_navigation.dart';
 import 'package:animooo/core/resources/app_routes.dart';
 import 'package:animooo/core/resources/app_strings.dart';
 import 'package:animooo/core/storge/storge_helper.dart';
@@ -238,8 +239,7 @@ class AuthController {
               res.alert ??
               "signup successfully, please check your email for verification",
         );
-        Navigator.pushNamed(
-          context,
+        AppNavigation.push(
           RoutesNames.otpVerification,
           arguments: {
             "email": emailController.text.trim(),
@@ -270,11 +270,7 @@ class AuthController {
         final storageHelper = services<StorageHelper>();
         storageHelper.saveAccessToken(res.data!.accessToken);
         storageHelper.saveRefreshToken(res.data!.refreshToken);
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          RoutesNames.main,
-          (route) => false,
-        );
+        AppNavigation.pushAndRemoveUntil(RoutesNames.main);
       } else {
         String message =
             res.error?.errors?.join('\n') ?? res.error?.message ?? "error";
@@ -289,8 +285,7 @@ class AuthController {
                   res.alert ??
                   "Account not verified, verification code send to your email",
             );
-            Navigator.pushNamed(
-              context,
+            AppNavigation.push(
               RoutesNames.otpVerification,
               arguments: {
                 "email": emailController.text.trim(),
@@ -389,10 +384,9 @@ class AuthController {
         message: res.alert ?? "verification succeeded",
       );
       if (otpFlow == OtpFlow.emailVerification) {
-        Navigator.pushNamed(context, RoutesNames.login);
+        AppNavigation.push(RoutesNames.login);
       } else {
-        Navigator.pushNamed(
-          context,
+        AppNavigation.push(
           RoutesNames.createNewPassword,
           arguments: {"email": email},
         );
@@ -445,8 +439,7 @@ class AuthController {
       );
       _setLoading(ButtonsLoadingKeys.sendCode, false);
       if (res.isSuccess) {
-        Navigator.pushNamed(
-          context,
+        AppNavigation.push(
           RoutesNames.otpVerification,
           arguments: {
             "email": emailController.text.trim(),
@@ -484,11 +477,7 @@ class AuthController {
           context,
           message: res.alert ?? "password updated",
         );
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          RoutesNames.login,
-          (route) => false,
-        );
+        AppNavigation.pushAndRemoveUntil(RoutesNames.login);
       } else {
         String? message = res.error?.errors?.join('\n') ?? res.error?.message;
         AppSnackBar.showError(context, message: message ?? "error");

@@ -1,4 +1,5 @@
 import "package:animooo/controllers/main_view_controller.dart";
+import "package:animooo/core/di/injection.dart";
 import "package:animooo/views/main/animal_view.dart";
 import "package:animooo/views/main/category_view.dart";
 import "package:animooo/views/main/home_view.dart";
@@ -19,7 +20,7 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-    _mainViewController = MainViewController();
+    _mainViewController = services<MainViewController>();
   }
 
   @override
