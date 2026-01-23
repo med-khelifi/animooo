@@ -88,9 +88,19 @@ class _CategoryViewState extends State<CategoryView> {
                 },
               ),
               Gap(AppHeight.h30),
-              CustomButton(
-                text: "Add Category",
-                onPressed: _mainViewController.onAddCategoryPressed,
+              StreamBuilder(
+                stream: _mainViewController.isAddCategoryButtonEnabledStream,
+                builder: (context, asyncSnapshot) {
+                  return Align(
+                    alignment: Alignment.center,
+                    child: CustomButton(
+                      text: "Add Category",
+                      onPressed: () =>
+                          _mainViewController.onAddCategoryPressed(context),
+                      isLoading: asyncSnapshot.data ?? false,
+                    ),
+                  );
+                },
               ),
             ],
           ),

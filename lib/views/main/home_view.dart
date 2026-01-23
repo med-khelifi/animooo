@@ -60,7 +60,6 @@ class _HomeViewState extends State<HomeView> {
                     Spacer(),
                     GestureDetector(
                       onTap: () {
-                        print("Add New Category");
                         _mainViewController.goToAddCategory();
                       },
                       child: CustomText(
@@ -91,11 +90,16 @@ class _HomeViewState extends State<HomeView> {
                   fontFamily: AppFonts.poppins,
                 ),
                 Spacer(),
-                CustomText(
-                  text: "Add New Animal",
-                  color: AppColors.blackColor,
-                  fontSize: AppFontSize.f16,
-                  fontFamily: AppFonts.poppins,
+                GestureDetector(
+                  onTap: () {
+                    _mainViewController.goToAddAnimal();
+                  },
+                  child: CustomText(
+                    text: "Add New Animal",
+                    color: AppColors.blackColor,
+                    fontSize: AppFontSize.f16,
+                    fontFamily: AppFonts.poppins,
+                  ),
                 ),
               ],
             ),

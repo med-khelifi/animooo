@@ -1,3 +1,5 @@
+import 'package:animooo/core/di/injection.dart';
+import 'package:animooo/core/storge/storge_helper.dart';
 import 'package:dio/dio.dart';
 
 class DioClient {
@@ -10,17 +12,19 @@ class DioClient {
       BaseOptions(
         baseUrl: 'http://192.168.100.127:8000/api',
         headers: {'Content-Type': 'application/json'},
-        connectTimeout: const Duration(seconds: 10),
+        // connectTimeout: const Duration(seconds: 10),
         // receiveTimeout: const Duration(seconds: 10),
       ),
     );
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = null; //await PrefHelper.getToken();
+          final storage = services<StorageHelper>();
+          final token = await storage.getAccessToken();
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+
           return handler.next(options);
         },
       ),

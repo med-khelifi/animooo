@@ -18,5 +18,5 @@ Map<String, dynamic> _$UserWithTokensModelToJson(
 ) => <String, dynamic>{
   'access_token': instance.accessToken,
   'refresh_token': instance.refreshToken,
-  'user': instance.user.toJson(),
+  'user': instance.user,
 };
