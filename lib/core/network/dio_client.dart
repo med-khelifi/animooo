@@ -7,8 +7,6 @@ import 'package:dio/dio.dart';
 
 class DioClient {
   late Dio _dio;
-  bool _isRefreshing = false;
-  final List<void Function()> _requestsToRetry = [];
 
   Dio get dio => _dio;
 
@@ -28,6 +26,8 @@ class DioClient {
     );
   }
 
+  // ============= Request Interceptor =============
+
   Future<void> _onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
@@ -41,6 +41,8 @@ class DioClient {
 
     return handler.next(options);
   }
+
+  // ============= Error Interceptor =============
 
   Future<void> _onError(
     DioException error,
@@ -56,15 +58,11 @@ class DioClient {
       return handler.reject(error);
     }
 
-    // If already refreshing, queue this request
-    if (_isRefreshing) {
-      await _queueRequest(error, handler);
-      return;
-    }
-
-    // Attempt to refresh the token
+    // Attempt to refresh the token and retry
     await _refreshTokenAndRetry(error, handler);
   }
+
+  // ============= Token Validation =============
 
   bool _isTokenExpiredError(DioException error) {
     if (error.response == null) return false;
@@ -91,52 +89,18 @@ class DioClient {
     return false;
   }
 
-  Future<void> _queueRequest(
-    DioException error,
-    ErrorInterceptorHandler handler,
-  ) async {
-    // Wait for token refresh to complete
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(milliseconds: 100));
-      return _isRefreshing;
-    });
-
-    // Retry the request with new token
-    try {
-      final storage = services<StorageHelper>();
-      final newAccessToken = await storage.getAccessToken();
-
-      if (newAccessToken == null) {
-        return handler.reject(error);
-      }
-
-      final originalRequest = error.requestOptions;
-      originalRequest.headers['Authorization'] = 'Bearer $newAccessToken';
-
-      if (originalRequest.data is FormData) {
-        originalRequest.data = await _cloneFormData(originalRequest.data);
-      }
-
-      final retryResponse = await _dio.fetch(originalRequest);
-      return handler.resolve(retryResponse);
-    } catch (e) {
-      return handler.reject(error);
-    }
-  }
+  // ============= Token Refresh Logic =============
 
   Future<void> _refreshTokenAndRetry(
     DioException error,
     ErrorInterceptorHandler handler,
   ) async {
-    _isRefreshing = true;
-
     try {
       final storage = services<StorageHelper>();
       final refreshToken = await storage.getRefreshToken();
 
       if (refreshToken == null) {
-        _isRefreshing = false;
-        await _handleSessionExpired(storage);
+        await _handleSessionExpired();
         return handler.reject(error);
       }
 
@@ -159,21 +123,39 @@ class DioClient {
       originalRequest.headers['Authorization'] = 'Bearer $newAccessToken';
 
       if (originalRequest.data is FormData) {
-        originalRequest.data = await _cloneFormData(originalRequest.data);
+        originalRequest.data = _cloneFormData(originalRequest.data);
       }
 
       final retryResponse = await _dio.fetch(originalRequest);
-      _isRefreshing = false;
       return handler.resolve(retryResponse);
     } catch (e) {
-      _isRefreshing = false;
-      final storage = services<StorageHelper>();
-      await _handleSessionExpired(storage);
+      await _handleSessionExpired();
       return handler.reject(error);
     }
   }
 
-  Future<void> _handleSessionExpired(StorageHelper storage) async {
+  // ============= FormData Handling =============
+
+  FormData _cloneFormData(FormData original) {
+    final cloned = FormData();
+
+    // Copy fields
+    for (final field in original.fields) {
+      cloned.fields.add(MapEntry(field.key, field.value));
+    }
+
+    // Copy files
+    for (final file in original.files) {
+      cloned.files.add(MapEntry(file.key, file.value.clone()));
+    }
+
+    return cloned;
+  }
+
+  // ============= Session Management =============
+
+  Future<void> _handleSessionExpired() async {
+    final storage = services<StorageHelper>();
     await storage.clearAll();
 
     final context = AppNavigation.navigatorKey.currentContext;
@@ -185,32 +167,5 @@ class DioClient {
     }
 
     AppNavigation.pushAndRemoveUntil(RoutesNames.login);
-  }
-
-  Future<FormData> _cloneFormData(FormData original) async {
-    final newFormData = FormData();
-
-    // Copy fields
-    newFormData.fields.addAll(original.fields);
-
-    // Copy files
-    for (final mapFile in original.files) {
-      final multipartFile = mapFile.value;
-
-      // Create new MultipartFile from stream
-      newFormData.files.add(
-        MapEntry(
-          mapFile.key,
-          MultipartFile.fromStream(
-            () => multipartFile.finalize(),
-            multipartFile.length,
-            filename: multipartFile.filename,
-            contentType: multipartFile.contentType,
-          ),
-        ),
-      );
-    }
-
-    return newFormData;
   }
 }
