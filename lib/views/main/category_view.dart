@@ -1,4 +1,5 @@
 import 'package:animooo/controllers/main_view_controller.dart';
+import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
@@ -23,7 +24,7 @@ class _CategoryViewState extends State<CategoryView> {
   @override
   void initState() {
     super.initState();
-    _mainViewController = MainViewController();
+    _mainViewController = services<MainViewController>();
   }
 
   @override

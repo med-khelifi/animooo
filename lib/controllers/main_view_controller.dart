@@ -100,7 +100,9 @@ class MainViewController {
     _currentIndexController.add(index);
   }
 
-  void goBackToHome() {}
+  void goBackToHome() {
+    onChangeIndex(0);
+  }
 
   void goToAddCategory() {
     onChangeIndex(2);
@@ -165,8 +167,6 @@ class MainViewController {
   // ============= Category Operations =============
 
   void onAddCategoryPressed(BuildContext context) async {
-    goBackToHome();
-
     if (_isAddCategoryButtonLoading) return;
     if (!categoryFormKey.currentState!.validate()) return;
 
