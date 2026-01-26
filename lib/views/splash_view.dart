@@ -83,12 +83,14 @@ class _SplashViewState extends State<SplashView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Gap(MediaQuery.of(context).size.height * 0.45),
             NamedAppLogo(),
-            Gap(AppHeight.h150),
+            Spacer(),
             LoadingAnimationWidget.staggeredDotsWave(
               color: AppColors.primary,
               size: AppFontSize.f24,
             ),
+            Gap(AppHeight.h20),
           ],
         ),
       ),

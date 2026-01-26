@@ -37,7 +37,7 @@ class _MainState extends State<Main> {
             child: IndexedStack(
               index: asyncSnapshot.data ?? 0,
               children: [
-                HomeView(),
+                HomeTab(),
                 SearchView(),
                 CategoryView(),
                 AnimalView(),

@@ -1,10 +1,12 @@
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
+import 'package:animooo/models/category_model.dart';
 import 'package:flutter/material.dart';
 
 class CategoryListItem extends StatelessWidget {
-  const CategoryListItem({super.key});
+  final CategoryModel categoryModel;
+  const CategoryListItem({super.key, required this.categoryModel});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class CategoryListItem extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadiusGeometry.circular(AppRadius.r60),
                 child: Image.network(
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1280px-Image_created_with_a_mobile_phone.png",
+                  categoryModel.imagePath,
                   height: AppHeight.h64,
                   width: AppWidth.w64,
                   fit: BoxFit.cover,
@@ -41,7 +43,7 @@ class CategoryListItem extends StatelessWidget {
             ],
           ),
           CustomText(
-            text: "Cats",
+            text: categoryModel.name,
             fontSize: AppFontSize.f16,
             color: AppColors.blackColor,
           ),

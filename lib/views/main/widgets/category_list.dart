@@ -1,10 +1,13 @@
 import 'package:animooo/core/resources/app_sizes.dart';
+import 'package:animooo/models/category_model.dart';
 import 'package:animooo/views/main/widgets/gategory_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class CategoryList extends StatelessWidget {
-  const CategoryList({super.key});
+  final List<CategoryModel> categories;
+
+  const CategoryList({super.key, required this.categories});
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +17,13 @@ class CategoryList extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 18),
-          itemCount: 21,
+          itemCount: categories.length,
           separatorBuilder: (_, _) => Gap(AppWidth.w12),
           itemBuilder: (context, index) {
-            return CategoryListItem(key: ValueKey(index));
+            return CategoryListItem(
+              key: ValueKey(index),
+              categoryModel: categories[index]!,
+            );
           },
         ),
       ),

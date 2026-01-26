@@ -14,12 +14,14 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       userId: (json['userId'] as num).toInt(),
+      imagePath: json['imagePath'] as String,
     );
 
 Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'imagePath': instance.imagePath,
       'description': instance.description,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),

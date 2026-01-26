@@ -29,7 +29,5 @@ void setupInjection() {
   services.registerLazySingleton<StorageHelper>(
     () => StorageHelper(services<FlutterSecureStorage>()),
   );
-  services.registerLazySingleton<MainViewController>(
-    () => MainViewController(),
-  );
+  services.registerSingleton<MainViewController>(MainViewController());
 }

@@ -6,6 +6,7 @@ part 'category_model.g.dart';
 class CategoryModel {
   final int id;
   final String name;
+  final String imagePath;
   final String description;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -18,6 +19,7 @@ class CategoryModel {
     required this.createdAt,
     required this.updatedAt,
     required this.userId,
+    required this.imagePath,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>
