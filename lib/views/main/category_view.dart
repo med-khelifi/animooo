@@ -7,6 +7,7 @@ import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/widgets/custom_button.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:animooo/core/widgets/custom_text_form_field.dart';
+import 'package:animooo/models/category_model.dart';
 import 'package:animooo/views/auth/widgets/handel_image_ui.dart';
 import 'package:animooo/views/main/widgets/category_user_info.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,16 @@ class _CategoryViewState extends State<CategoryView> {
   void initState() {
     super.initState();
     _mainViewController = services<MainViewController>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final CategoryModel? categoryModel =
+        ModalRoute.of(context)!.settings.arguments as CategoryModel?;
+    if (categoryModel != null) {
+      _mainViewController.fillCategoryData(categoryModel);
+    }
   }
 
   @override
@@ -92,14 +103,19 @@ class _CategoryViewState extends State<CategoryView> {
               StreamBuilder(
                 stream: _mainViewController.isAddCategoryButtonEnabledStream,
                 builder: (context, asyncSnapshot) {
-                  return Align(
-                    alignment: Alignment.center,
-                    child: CustomButton(
-                      text: "Add Category",
-                      onPressed: () =>
-                          _mainViewController.onAddCategoryPressed(context),
-                      isLoading: asyncSnapshot.data ?? false,
-                    ),
+                  return StreamBuilder(
+                    stream: _mainViewController.categoryTabButtonTextStream,
+                    builder: (context, asyncSnapshot1) {
+                      return Align(
+                        alignment: Alignment.center,
+                        child: CustomButton(
+                          text: asyncSnapshot1.data ?? "Add New Category",
+                          onPressed: () => _mainViewController
+                              .onAddEditCategoryPressed(context),
+                          isLoading: asyncSnapshot.data ?? false,
+                        ),
+                      );
+                    },
                   );
                 },
               ),

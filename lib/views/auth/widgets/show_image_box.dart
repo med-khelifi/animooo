@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -20,7 +21,9 @@ class ShowImageBox extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(AppRadius.r10)),
-          child: Image.file(file),
+          child: file.path.startsWith("http")
+              ? Image.network(file.path)
+              : Image.file(file),
         ),
       ),
     );

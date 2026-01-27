@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
+import 'package:animooo/core/enums/view_mode.dart';
 import 'package:animooo/core/requests/create_new_category_request.dart';
 import 'package:animooo/core/utils/image_picker_utils.dart';
 import 'package:animooo/core/widgets/app_snackbar.dart';
@@ -14,6 +15,10 @@ import 'package:flutter/cupertino.dart';
 enum ImageTarget { category, animal }
 
 class MainViewController {
+  MainViewController() {
+    _categoryTabButtonTextStreamBuilder.add("Add New Category");
+  }
+  var _categoryTabViewMode = ViewMode.addNew;
   // ============= Navigation =============
 
   final StreamController<int> _currentIndexController =
@@ -62,6 +67,12 @@ class MainViewController {
   File? _animalImageFile;
 
   // ============= Button Loading Streams =============
+  final StreamController<String> _categoryTabButtonTextStreamBuilder =
+      StreamController<String>.broadcast();
+  Stream<String> get categoryTabButtonTextStream =>
+      _categoryTabButtonTextStreamBuilder.stream;
+
+  // ============= Button text Streams =============
 
   final StreamController<bool> _isAddCategoryButtonLoadingStreamController =
       StreamController<bool>.broadcast();
@@ -166,7 +177,77 @@ class MainViewController {
 
   // ============= Category Operations =============
 
-  void onAddCategoryPressed(BuildContext context) async {
+  void onAddEditCategoryPressed(BuildContext context) async {
+    if (_categoryTabViewMode == ViewMode.addNew) {
+      await addNewCategory(context);
+    } else {
+      await editCategory(context);
+    }
+  }
+
+  Future<void> addNewCategory(BuildContext context) async {
+    if (_isAddCategoryButtonLoading) return;
+    if (!categoryFormKey.currentState!.validate()) return;
+
+    if (_categoryImageState == ImagePickerState.none) {
+      _categoryImageState = ImagePickerState.error;
+    }
+
+    if (_categoryImageState == ImagePickerState.error) {
+      categoryImageStreamController.add((ImagePickerState.error, null));
+      return;
+    }
+
+    final categoryService = services<CategoryService>();
+
+    _isAddCategoryButtonLoading = true;
+    _isAddCategoryButtonLoadingStreamController.add(
+      _isAddCategoryButtonLoading,
+    );
+
+    final res = await categoryService.registerNewCategory(
+      createCategoryRequest: CreateNewCategoryRequest(
+        name: categoryNameController.text.trim(),
+        description: categoryDescriptionController.text.trim(),
+        image: _categoryImageFile!.path,
+      ),
+    );
+
+    _isAddCategoryButtonLoading = false;
+    _isAddCategoryButtonLoadingStreamController.add(
+      _isAddCategoryButtonLoading,
+    );
+
+    if (res.isSuccess) {
+      // Reset form first
+      _resetCategoryTab();
+
+      // Update categories list
+      _categories.insert(0, res.data!);
+      _categoriesStreamController.add(_categories);
+
+      // Show success message
+      if (context.mounted) {
+        AppSnackBar.showSuccess(
+          context,
+          message: res.alert ?? "Category added successfully",
+        );
+      }
+
+      // Navigate back to home
+      goBackToHome();
+    } else {
+      String? message = res.error?.errors?.join('\n') ?? res.error?.message;
+      if (context.mounted) {
+        AppSnackBar.showError(
+          context,
+          message: message ?? "Error adding category",
+        );
+      }
+    }
+  }
+
+  Future<void> editCategory(BuildContext context) async {
     if (_isAddCategoryButtonLoading) return;
     if (!categoryFormKey.currentState!.validate()) return;
 
@@ -273,6 +354,7 @@ class MainViewController {
     _isAddAnimalButtonLoadingStreamController.close();
     _categoriesStreamController.close();
     _isLoadingCategoriesStreamController.close();
+    _categoryTabButtonTextStreamBuilder.close();
 
     // Dispose controllers
     categoryNameController.dispose();
@@ -281,5 +363,31 @@ class MainViewController {
     animalDescriptionController.dispose();
     animalPriceController.dispose();
     animalCategoryController.dispose();
+  }
+
+  void fillCategoryData(CategoryModel categoryModel) {
+    categoryNameController.text = categoryModel.name;
+    categoryDescriptionController.text = categoryModel.description;
+    _categoryImageFile = File(categoryModel.imagePath);
+    _categoryImageState = ImagePickerState.picked;
+    categoryImageStreamController.add((
+      _categoryImageState,
+      _categoryImageFile,
+    ));
+  }
+
+  onCategoryItemTaped(CategoryModel categoryModel) {
+    _categoryTabViewMode = ViewMode.edit;
+    _categoryTabButtonTextStreamBuilder.add("Edit Category");
+    goToAddCategory();
+    fillCategoryData(categoryModel);
+  }
+
+  void _resetCategoryTab() {
+    categoryNameController.clear();
+    categoryDescriptionController.clear();
+    _categoryImageFile = null;
+    _categoryImageState = ImagePickerState.none;
+    categoryImageStreamController.add((_categoryImageState, null));
   }
 }

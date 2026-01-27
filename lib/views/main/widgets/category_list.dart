@@ -6,8 +6,12 @@ import 'package:gap/gap.dart';
 
 class CategoryList extends StatelessWidget {
   final List<CategoryModel> categories;
-
-  const CategoryList({super.key, required this.categories});
+  final Function(CategoryModel) onCategoryTap;
+  const CategoryList({
+    super.key,
+    required this.categories,
+    required this.onCategoryTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +24,12 @@ class CategoryList extends StatelessWidget {
           itemCount: categories.length,
           separatorBuilder: (_, _) => Gap(AppWidth.w12),
           itemBuilder: (context, index) {
-            return CategoryListItem(
-              key: ValueKey(index),
-              categoryModel: categories[index]!,
+            return GestureDetector(
+              onTap: () => onCategoryTap(categories[index]),
+              child: CategoryListItem(
+                key: ValueKey(index),
+                categoryModel: categories[index]!,
+              ),
             );
           },
         ),
