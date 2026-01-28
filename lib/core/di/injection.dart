@@ -1,5 +1,6 @@
 import 'package:animooo/controllers/main_view_controller.dart';
 import 'package:animooo/core/storge/storge_helper.dart';
+import 'package:animooo/services/animal_service.dart';
 import 'package:animooo/services/category_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -22,6 +23,9 @@ void setupInjection() {
   );
   services.registerLazySingleton<CategoryService>(
     () => CategoryService(apiService: services()),
+  );
+  services.registerLazySingleton<AnimalService>(
+    () => AnimalService(apiService: services()),
   );
   services.registerLazySingleton<FlutterSecureStorage>(
     () => const FlutterSecureStorage(),

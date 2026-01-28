@@ -2,27 +2,30 @@ import 'package:animooo/core/resources/app_colors.dart';
 import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
+import 'package:animooo/models/animal_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class AnimalsList extends StatelessWidget {
-  const AnimalsList({super.key});
+  const AnimalsList({super.key, required this.animals});
+  final List<AnimalModel> animals;
 
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: AppPadding.pw10),
       sliver: SliverList.separated(
-        itemBuilder: (context, index) => AnimalListItem(),
+        itemBuilder: (context, index) => AnimalListItem(animal: animals[index]),
         separatorBuilder: (context, index) => Gap(AppHeight.h10),
-        itemCount: 6,
+        itemCount: animals.length,
       ),
     );
   }
 }
 
 class AnimalListItem extends StatelessWidget {
-  const AnimalListItem({super.key});
+  const AnimalListItem({super.key, required this.animal});
+  final AnimalModel animal;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,16 +39,14 @@ class AnimalListItem extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _header(),
+          _header(animal.animalName, animal.animalPrice),
           Gap(AppHeight.h6),
-          Image.network(
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1280px-Image_created_with_a_mobile_phone.png",
-          ),
+          Image.network(animal.animalImage),
           Gap(AppHeight.h6),
           CustomText(
-            text:
-                "hi my name is mohammed,I found this sweet dog and am looking for a loving home for them. If you're ready to welcome a new furry friend into your life, this adorable pup is waiting to bring joy and...",
+            text: animal.animalDescription,
             color: AppColors.blackColor,
             maxLines: 3,
           ),
@@ -54,14 +55,14 @@ class AnimalListItem extends StatelessWidget {
     );
   }
 
-  Widget _header() => Row(
+  Widget _header(name, price) => Row(
     children: [
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           CustomText(
-            text: "Dog Name",
+            text: name,
             fontSize: AppFontSize.f12,
             color: AppColors.blackColor,
             fontFamily: AppFonts.poppins,
@@ -76,7 +77,7 @@ class AnimalListItem extends StatelessWidget {
       ),
       Spacer(),
       CustomText(
-        text: "100\$",
+        text: "$price\$",
         fontSize: AppFontSize.f12,
         color: AppColors.primary,
         fontFamily: AppFonts.poppins,

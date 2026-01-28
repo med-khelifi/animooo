@@ -6,6 +6,7 @@ import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/widgets/app_logo.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
 import 'package:animooo/core/widgets/no_items.dart';
+import 'package:animooo/models/animal_model.dart';
 import 'package:animooo/models/category_model.dart';
 import 'package:animooo/views/main/widgets/animals_list.dart';
 import 'package:animooo/views/main/widgets/category_list.dart';
@@ -30,13 +31,17 @@ class _HomeViewState extends State<HomeView> {
     // Load categories when view initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mainViewController.getAllCategories(context);
+      _mainViewController.getAllAnimals(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => _mainViewController.getAllCategories(context),
+      onRefresh: () async {
+        _mainViewController.getAllCategories(context);
+        _mainViewController.getAllAnimals(context);
+      },
       color: AppColors.primary,
       child: CustomScrollView(
         slivers: [
@@ -104,7 +109,21 @@ class _HomeViewState extends State<HomeView> {
 
           SliverGap(AppHeight.h16),
 
-          const AnimalsList(),
+          StreamBuilder<List<AnimalModel>>(
+            stream: _mainViewController.animalsStream,
+            builder: (context, asyncSnapshot) {
+              final animals = asyncSnapshot.data ?? [];
+              if (animals.isEmpty) {
+                return SliverToBoxAdapter(
+                  child: NoItems(
+                    title: "No Animals Found!",
+                    subtitle: "There is no Animals to display.",
+                  ),
+                );
+              }
+              return AnimalsList(animals: asyncSnapshot.data ?? const []);
+            },
+          ),
         ],
       ),
     );
@@ -141,31 +160,35 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildAnimalsHeader() {
-    return Row(
-      children: [
-        CustomText(
-          text: "All Animals (0)", // TODO: Get actual count
-          color: AppColors.blackColor,
-          fontSize: AppFontSize.f16,
-          fontFamily: AppFonts.poppins,
-        ),
-        const Spacer(),
-        GestureDetector(
-          onTap: () => _mainViewController.goToAddAnimal(),
-          child: CustomText(
-            text: "Add New Animal",
-            color: AppColors.blackColor,
-            fontSize: AppFontSize.f16,
-            fontFamily: AppFonts.poppins,
-          ),
-        ),
-      ],
+    return StreamBuilder(
+      stream: _mainViewController.animalsStream,
+      builder: (context, asyncSnapshot) {
+        return Row(
+          children: [
+            CustomText(
+              text: "All Animals (${asyncSnapshot.data?.length ?? 0})",
+              color: AppColors.blackColor,
+              fontSize: AppFontSize.f16,
+              fontFamily: AppFonts.poppins,
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: () => _mainViewController.goToAddAnimal(),
+              child: CustomText(
+                text: "Add New Animal",
+                color: AppColors.blackColor,
+                fontSize: AppFontSize.f16,
+                fontFamily: AppFonts.poppins,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 // ============= Home Tab Navigator =============
-
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
 

@@ -9,7 +9,9 @@ import 'package:animooo/core/requests/update_category_request.dart';
 import 'package:animooo/core/utils/image_picker_utils.dart';
 import 'package:animooo/core/widgets/app_snackbar.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
+import 'package:animooo/models/animal_model.dart';
 import 'package:animooo/models/category_model.dart';
+import 'package:animooo/services/animal_service.dart';
 import 'package:animooo/services/category_service.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -102,7 +104,14 @@ class MainViewController {
   Stream<List<CategoryModel>> get categoriesStream =>
       _categoriesStreamController.stream;
 
+  final StreamController<List<AnimalModel>> _animalsStreamController =
+      StreamController<List<AnimalModel>>.broadcast();
+
+  Stream<List<AnimalModel>> get animalsStream =>
+      _animalsStreamController.stream;
+
   List<CategoryModel> _categories = [];
+  List<AnimalModel> _animals = [];
 
   final StreamController<bool> _isLoadingCategoriesStreamController =
       StreamController<bool>.broadcast();
@@ -347,6 +356,28 @@ class MainViewController {
           res.error?.errors?.join('\n') ??
           res.error?.message ??
           "Error loading categories";
+      if (context.mounted) {
+        AppSnackBar.showError(context, message: message);
+      }
+    }
+  }
+
+  Future<void> getAllAnimals(BuildContext context) async {
+    final animalsService = services<AnimalService>();
+    _isLoadingCategoriesStreamController.add(true);
+
+    final res = await animalsService.getAllAnimals();
+
+    _isLoadingCategoriesStreamController.add(false);
+
+    if (res.isSuccess) {
+      _animals = res.data ?? [];
+      _animalsStreamController.add(_animals);
+    } else {
+      String message =
+          res.error?.errors?.join('\n') ??
+          res.error?.message ??
+          "Error loading animals";
       if (context.mounted) {
         AppSnackBar.showError(context, message: message);
       }
