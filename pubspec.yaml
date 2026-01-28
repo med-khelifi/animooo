@@ -78,6 +78,7 @@ flutter:
     - assets/images/svg/no_internet_connection.svg
     - assets/images/svg/navbar_icons/
     - assets/images/svg/globe_planet.svg
+    - assets/images/svg/no_items.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -5,6 +5,7 @@ import 'package:animooo/core/resources/app_fonts.dart';
 import 'package:animooo/core/resources/app_sizes.dart';
 import 'package:animooo/core/widgets/app_logo.dart';
 import 'package:animooo/core/widgets/custom_text.dart';
+import 'package:animooo/core/widgets/no_items.dart';
 import 'package:animooo/models/category_model.dart';
 import 'package:animooo/views/main/widgets/animals_list.dart';
 import 'package:animooo/views/main/widgets/category_list.dart';
@@ -75,14 +76,17 @@ class _HomeViewState extends State<HomeView> {
                 builder: (context, loadingSnapshot) {
                   final categories = categoriesSnapshot.data ?? [];
                   final isLoading = loadingSnapshot.data ?? false;
-
-                  return Skeletonizer.sliver(
-                    enabled: isLoading,
-                    child: CategoryList(
-                      onCategoryTap: _mainViewController.onCategoryItemTaped,
-                      categories: categories,
-                    ),
-                  );
+                  if (categories.isEmpty) {
+                    return SliverToBoxAdapter(child: NoItems());
+                  } else {
+                    return Skeletonizer.sliver(
+                      enabled: isLoading,
+                      child: CategoryList(
+                        onCategoryTap: _mainViewController.onCategoryItemTaped,
+                        categories: categories,
+                      ),
+                    );
+                  }
                 },
               );
             },

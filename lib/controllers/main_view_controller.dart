@@ -5,6 +5,7 @@ import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/enums/view_mode.dart';
 import 'package:animooo/core/requests/create_new_category_request.dart';
+import 'package:animooo/core/requests/update_category_request.dart';
 import 'package:animooo/core/utils/image_picker_utils.dart';
 import 'package:animooo/core/widgets/app_snackbar.dart';
 import 'package:animooo/core/widgets/bottom_sheets.dart';
@@ -19,6 +20,7 @@ class MainViewController {
     _categoryTabButtonTextStreamBuilder.add("Add New Category");
   }
   var _categoryTabViewMode = ViewMode.addNew;
+
   // ============= Navigation =============
 
   final StreamController<int> _currentIndexController =
@@ -66,6 +68,9 @@ class MainViewController {
   File? _categoryImageFile;
   File? _animalImageFile;
 
+  CategoryModel? _categoryToEdit;
+  bool _isCategoryImageChanged = false; // Track if image was changed
+
   // ============= Button Loading Streams =============
   final StreamController<String> _categoryTabButtonTextStreamBuilder =
       StreamController<String>.broadcast();
@@ -112,6 +117,9 @@ class MainViewController {
   }
 
   void goBackToHome() {
+    _resetCategoryTab();
+    _categoryTabViewMode = ViewMode.addNew;
+    _categoryTabButtonTextStreamBuilder.add("Add New Category");
     onChangeIndex(0);
   }
 
@@ -145,6 +153,7 @@ class MainViewController {
     if (target == ImageTarget.category) {
       _categoryImageFile = file;
       _categoryImageState = ImagePickerState.picked;
+      _isCategoryImageChanged = true; // Mark image as changed
       categoryImageStreamController.add((_categoryImageState, file));
     } else {
       _animalImageFile = file;
@@ -189,8 +198,11 @@ class MainViewController {
     if (_isAddCategoryButtonLoading) return;
     if (!categoryFormKey.currentState!.validate()) return;
 
+    // For new category, image is required
     if (_categoryImageState == ImagePickerState.none) {
       _categoryImageState = ImagePickerState.error;
+      categoryImageStreamController.add((ImagePickerState.error, null));
+      return;
     }
 
     if (_categoryImageState == ImagePickerState.error) {
@@ -251,10 +263,9 @@ class MainViewController {
     if (_isAddCategoryButtonLoading) return;
     if (!categoryFormKey.currentState!.validate()) return;
 
-    if (_categoryImageState == ImagePickerState.none) {
-      _categoryImageState = ImagePickerState.error;
-    }
-
+    // For edit mode, image is optional (only validate if user tried to change it)
+    // If image state is picked, we have a valid image (either new or existing)
+    // If image state is none in edit mode, that means the existing image should be kept
     if (_categoryImageState == ImagePickerState.error) {
       categoryImageStreamController.add((ImagePickerState.error, null));
       return;
@@ -267,11 +278,19 @@ class MainViewController {
       _isAddCategoryButtonLoading,
     );
 
-    final res = await categoryService.registerNewCategory(
-      createCategoryRequest: CreateNewCategoryRequest(
+    String? imagePath;
+    if (_isCategoryImageChanged && _categoryImageFile != null) {
+      // User picked a new image - send the local file path
+      imagePath = _categoryImageFile!.path;
+    }
+    // If not changed, send null and backend will keep existing image
+
+    final res = await categoryService.updateCategory(
+      updateCategoryRequest: UpdateCategoryRequest(
+        id: _categoryToEdit!.id,
         name: categoryNameController.text.trim(),
         description: categoryDescriptionController.text.trim(),
-        image: _categoryImageFile!.path,
+        image: imagePath, // null means keep existing image
       ),
     );
 
@@ -281,33 +300,31 @@ class MainViewController {
     );
 
     if (res.isSuccess) {
-      // Reset form first
-      categoryNameController.clear();
-      categoryDescriptionController.clear();
-      _categoryImageFile = null;
-      _categoryImageState = ImagePickerState.none;
-      categoryImageStreamController.add((_categoryImageState, null));
-
-      // Update categories list
-      _categories.insert(0, res.data!);
-      _categoriesStreamController.add(_categories);
+      // Update the category in the list
+      final index = _categories.indexWhere(
+        (cat) => cat.id == _categoryToEdit!.id,
+      );
+      if (index != -1) {
+        _categories[index] = res.data!;
+        _categoriesStreamController.add(_categories);
+      }
 
       // Show success message
       if (context.mounted) {
         AppSnackBar.showSuccess(
           context,
-          message: res.alert ?? "Category added successfully",
+          message: res.alert ?? "Category updated successfully",
         );
       }
 
-      // Navigate back to home
+      // Navigate back to home (this will also reset the form)
       goBackToHome();
     } else {
       String? message = res.error?.errors?.join('\n') ?? res.error?.message;
       if (context.mounted) {
         AppSnackBar.showError(
           context,
-          message: message ?? "Error adding category",
+          message: message ?? "Error updating category",
         );
       }
     }
@@ -365,29 +382,39 @@ class MainViewController {
     animalCategoryController.dispose();
   }
 
+  /// Fills the category form with existing category data for editing
   void fillCategoryData(CategoryModel categoryModel) {
     categoryNameController.text = categoryModel.name;
     categoryDescriptionController.text = categoryModel.description;
+
+    // Set the image file from network URL
     _categoryImageFile = File(categoryModel.imagePath);
     _categoryImageState = ImagePickerState.picked;
+    _isCategoryImageChanged = false; // Image not changed yet, just loaded
+
     categoryImageStreamController.add((
       _categoryImageState,
       _categoryImageFile,
     ));
   }
 
-  onCategoryItemTaped(CategoryModel categoryModel) {
+  /// Called when a category item is tapped for editing
+  void onCategoryItemTaped(CategoryModel categoryModel) {
     _categoryTabViewMode = ViewMode.edit;
     _categoryTabButtonTextStreamBuilder.add("Edit Category");
-    goToAddCategory();
+    _categoryToEdit = categoryModel;
     fillCategoryData(categoryModel);
+    goToAddCategory();
   }
 
+  /// Resets the category form to initial state
   void _resetCategoryTab() {
     categoryNameController.clear();
     categoryDescriptionController.clear();
     _categoryImageFile = null;
     _categoryImageState = ImagePickerState.none;
+    _isCategoryImageChanged = false;
+    _categoryToEdit = null;
     categoryImageStreamController.add((_categoryImageState, null));
   }
 }

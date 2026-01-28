@@ -10,12 +10,16 @@ class ApiExceptions {
       final statusCode = data["statusCode"];
 
       List<String>? errors;
+      String? message;
 
       if (data["error"] is List) {
         errors = List<String>.from(data["error"]);
       }
+      if (data["message"] is String) {
+        message = data["message"] as String;
+      }
 
-      return ApiError(statusCode: statusCode, errors: errors);
+      return ApiError(statusCode: statusCode, errors: errors, message: message);
     }
 
     switch (e.type) {
