@@ -119,6 +119,35 @@ class _CategoryViewState extends State<CategoryView> {
                   );
                 },
               ),
+              Gap(AppHeight.h10),
+              StreamBuilder(
+                stream: _mainViewController.isDeleteCategoryButtonVisibleStream,
+                builder: (context, snapshot) => snapshot.data ?? false
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            StreamBuilder(
+                              stream: _mainViewController
+                                  .isDeleteCategoryButtonLoadingStream,
+                              builder: (context, asyncSnapshot) {
+                                return CustomButton(
+                                  text: "Delete Category",
+                                  color: AppColors.red,
+                                  isLoading: asyncSnapshot.data ?? false,
+                                  onPressed: () => _mainViewController
+                                      .onDeleteCategoryPressed(context),
+                                );
+                              },
+                            ),
+                            Gap(AppHeight.h10),
+                          ],
+                        ),
+                      )
+                    : SizedBox.shrink(),
+              ),
             ],
           ),
         ),

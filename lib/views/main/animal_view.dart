@@ -105,7 +105,7 @@ class _AnimalViewState extends State<AnimalView> {
               Gap(AppHeight.h16),
               CustomButton(
                 text: "Add Animal",
-                onPressed: _mainViewController.onAddAnimalPressed,
+                onPressed: _mainViewController.goToAddAnimal,
               ),
             ],
           ),

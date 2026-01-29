@@ -45,6 +45,8 @@ class AppWidth {
   static double w9 = 9.0.w;
 
   static double w6 = 6.0.w;
+
+  static double w10 = 10.0.w;
 }
 
 class AppPadding {

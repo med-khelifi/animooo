@@ -87,7 +87,7 @@ class _HomeViewState extends State<HomeView> {
                     return Skeletonizer.sliver(
                       enabled: isLoading,
                       child: CategoryList(
-                        onCategoryTap: _mainViewController.onCategoryItemTaped,
+                        onCategoryTap: _mainViewController.onCategoryItemTapped,
                         categories: categories,
                       ),
                     );

@@ -124,4 +124,36 @@ class CategoryService {
       return Response.failure(ApiError(message: e.toString()));
     }
   }
+
+  Future<Response<bool>> deleteCategory({required int id}) async {
+    try {
+      var result = await _apiService.delete(
+        endpoint: '/deleteCategory',
+        query: {'id': id},
+      );
+
+      if (result is ApiError) {
+        return Response.failure(result);
+      }
+
+      // Extract data from response
+      final data = result.data;
+
+      if (data == null || data is! Map<String, dynamic>) {
+        return Response.failure(ApiError(message: 'Invalid backend response'));
+      }
+
+      // Validate status code
+      int code = int.tryParse(data["statusCode"].toString()) ?? 500;
+      if (code < 200 || code > 299) {
+        return Response.failure(ApiError(message: "Unknown backend error"));
+      }
+
+      final alert = data["message"]?.toString();
+
+      return Response.success(true, alert: alert);
+    } catch (e) {
+      return Response.failure(ApiError(message: e.toString()));
+    }
+  }
 }
