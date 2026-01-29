@@ -241,10 +241,12 @@ class AuthController {
         );
         AppNavigation.push(
           RoutesNames.otpVerification,
-          arguments: {
-            "email": emailController.text.trim(),
-            "otpFlow": OtpFlow.emailVerification,
-          },
+          arguments:
+              {
+                    "email": emailController.text.trim(),
+                    "otpFlow": OtpFlow.emailVerification,
+                  }
+                  as Map<String, dynamic>,
         );
       } else {
         String? message = res.error?.errors?.join('\n') ?? res.error?.message;

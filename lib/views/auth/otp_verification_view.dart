@@ -35,6 +35,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
     super.didChangeDependencies();
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+
     _email = args["email"];
     _otpFlow = args["otpFlow"];
   }

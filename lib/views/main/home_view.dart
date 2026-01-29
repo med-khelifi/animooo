@@ -1,3 +1,5 @@
+import 'package:animooo/controllers/animal_controller.dart';
+import 'package:animooo/controllers/category_controller.dart';
 import 'package:animooo/controllers/main_view_controller.dart';
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/resources/app_colors.dart';
@@ -23,15 +25,19 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final MainViewController _mainViewController;
+  late final CategoryController _categoryController;
+  late final AnimalController _animalController;
 
   @override
   void initState() {
     super.initState();
     _mainViewController = services<MainViewController>();
+    _categoryController = services<CategoryController>();
+    _animalController = services<AnimalController>();
     // Load categories when view initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _mainViewController.getAllCategories(context);
-      _mainViewController.getAllAnimals(context);
+      _categoryController.getAllCategories(context);
+      _animalController.getAllAnimals(context);
     });
   }
 
@@ -39,8 +45,8 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        _mainViewController.getAllCategories(context);
-        _mainViewController.getAllAnimals(context);
+        _categoryController.getAllCategories(context);
+        _animalController.getAllAnimals(context);
       },
       color: AppColors.primary,
       child: CustomScrollView(
@@ -74,10 +80,10 @@ class _HomeViewState extends State<HomeView> {
 
           // ============= Categories List =============
           StreamBuilder<List<CategoryModel>>(
-            stream: _mainViewController.categoriesStream,
+            stream: _categoryController.categoriesStream,
             builder: (context, categoriesSnapshot) {
               return StreamBuilder<bool>(
-                stream: _mainViewController.isLoadingCategoriesStream,
+                stream: _categoryController.isLoadingStream,
                 builder: (context, loadingSnapshot) {
                   final categories = categoriesSnapshot.data ?? [];
                   final isLoading = loadingSnapshot.data ?? false;
@@ -87,7 +93,7 @@ class _HomeViewState extends State<HomeView> {
                     return Skeletonizer.sliver(
                       enabled: isLoading,
                       child: CategoryList(
-                        onCategoryTap: _mainViewController.onCategoryItemTapped,
+                        onCategoryTap: _categoryController.onCategoryItemTapped,
                         categories: categories,
                       ),
                     );
@@ -110,7 +116,7 @@ class _HomeViewState extends State<HomeView> {
           SliverGap(AppHeight.h16),
 
           StreamBuilder<List<AnimalModel>>(
-            stream: _mainViewController.animalsStream,
+            stream: _animalController.animalsStream,
             builder: (context, asyncSnapshot) {
               final animals = asyncSnapshot.data ?? [];
               if (animals.isEmpty) {
@@ -131,7 +137,7 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildCategoriesHeader() {
     return StreamBuilder(
-      stream: _mainViewController.categoriesStream,
+      stream: _categoryController.categoriesStream,
       builder: (context, snapshot) {
         final categoryCount = snapshot.data?.length ?? 0;
 
@@ -161,7 +167,7 @@ class _HomeViewState extends State<HomeView> {
 
   Widget _buildAnimalsHeader() {
     return StreamBuilder(
-      stream: _mainViewController.animalsStream,
+      stream: _animalController.animalsStream,
       builder: (context, asyncSnapshot) {
         return Row(
           children: [
@@ -208,22 +214,5 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return HomeView();
-    /*
-      Navigator(
-      key: _mainViewController.homeNavigationKey,
-      onGenerateRoute: (settings) {
-        final routeName = settings.name;
-
-        if (routeName == RoutesNames.mainHomeAllCategories) {
-          return MaterialPageRoute(
-            builder: (context) => const AllCategoriesView(),
-          );
-        }
-
-        // Default route
-        return MaterialPageRoute(builder: (context) => const );
-      },
-    );
-     */
   }
 }

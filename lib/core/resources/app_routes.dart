@@ -10,27 +10,38 @@ import 'package:flutter/material.dart';
 
 class AppRoutes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    if (settings.name == RoutesNames.splash.route) {
-      return MaterialPageRoute(builder: (_) => const SplashView());
-    } else if (settings.name == RoutesNames.login.route) {
-      return MaterialPageRoute(builder: (_) => const LoginView());
-    } else if (settings.name == RoutesNames.signup.route) {
-      return MaterialPageRoute(builder: (_) => const SignupView());
-    } else if (settings.name == RoutesNames.forgetPassword.route) {
-      return MaterialPageRoute(builder: (_) => const ForgetPasswordView());
-    } else if (settings.name == RoutesNames.createNewPassword.route) {
-      return MaterialPageRoute(builder: (_) => const CreateNewPasswordView());
-    } else if (settings.name == RoutesNames.otpVerification.route) {
-      return MaterialPageRoute(builder: (_) => const OtpVerificationView());
-    } else if (settings.name == RoutesNames.noInternetConnection.route) {
-      return MaterialPageRoute(
-        builder: (_) => const NoInternetConnectionView(),
-      );
-    } else if (settings.name == RoutesNames.main.route) {
-      return MaterialPageRoute(builder: (_) => const Main());
-    } else {
-      return _undefinedRoute();
+    switch (settings.name) {
+      case '/':
+        return _build(settings, const SplashView());
+
+      case '/login':
+        return _build(settings, const LoginView());
+
+      case '/signup':
+        return _build(settings, const SignupView());
+
+      case '/forgetPassword':
+        return _build(settings, const ForgetPasswordView());
+
+      case '/createNewPassword':
+        return _build(settings, const CreateNewPasswordView());
+
+      case '/otpVerification':
+        return _build(settings, const OtpVerificationView());
+
+      case '/noInternetConnection':
+        return _build(settings, const NoInternetConnectionView());
+
+      case '/main':
+        return _build(settings, const Main());
+
+      default:
+        return _undefinedRoute();
     }
+  }
+
+  static MaterialPageRoute _build(RouteSettings settings, Widget page) {
+    return MaterialPageRoute(settings: settings, builder: (_) => page);
   }
 
   static Route<dynamic> _undefinedRoute() {
@@ -56,6 +67,5 @@ enum RoutesNames {
   mainHomeAllCategories('/main/home/allCategories');
 
   final String route;
-
   const RoutesNames(this.route);
 }

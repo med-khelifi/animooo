@@ -1,4 +1,4 @@
-import 'package:animooo/controllers/main_view_controller.dart';
+import 'package:animooo/controllers/animal_controller.dart';
 import 'package:animooo/core/di/injection.dart';
 import 'package:animooo/core/enums/image_picker_state.dart';
 import 'package:animooo/core/resources/app_colors.dart';
@@ -20,16 +20,16 @@ class AnimalView extends StatefulWidget {
 }
 
 class _AnimalViewState extends State<AnimalView> {
-  late MainViewController _mainViewController;
+  late AnimalController _animalController;
   @override
   void initState() {
     super.initState();
-    _mainViewController = services<MainViewController>();
+    _animalController = services<AnimalController>();
   }
 
   @override
   void dispose() {
-    _mainViewController.dispose();
+    _animalController.dispose();
     super.dispose();
   }
 
@@ -40,7 +40,7 @@ class _AnimalViewState extends State<AnimalView> {
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: AppPadding.pw18),
         child: Form(
-          key: _mainViewController.animalFormKey,
+          key: _animalController.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -56,15 +56,15 @@ class _AnimalViewState extends State<AnimalView> {
               CustomTextFormField(
                 hint: "Enter Animal Name",
                 label: "Animal Name",
-                controller: _mainViewController.animalNameController,
-                validator: _mainViewController.validateCategoryName,
+                controller: _animalController.nameController,
+                validator: _animalController.validateName,
               ),
               Gap(AppHeight.h6),
               CustomTextFormField(
                 hint: "Enter Animal description",
                 label: "Animal description",
-                controller: _mainViewController.animalDescriptionController,
-                validator: _mainViewController.validateCategoryDescription,
+                controller: _animalController.descriptionController,
+                validator: _animalController.validateDescription,
                 maxLines: 3,
               ),
               Gap(AppHeight.h13),
@@ -76,36 +76,33 @@ class _AnimalViewState extends State<AnimalView> {
               ),
               Gap(AppHeight.h6),
               StreamBuilder(
-                stream: _mainViewController.animalImageStream,
+                stream: _animalController.imageStream,
                 builder: (context, asyncSnapshot) {
                   return HandelImageUi(
                     imageState: asyncSnapshot.data?.$1 ?? ImagePickerState.none,
                     file: asyncSnapshot.data?.$2,
-                    onTap: () => _mainViewController.onTakeImagePressed(
-                      context,
-                      ImageTarget.animal,
-                    ),
+                    onTap: () => _animalController.onTakeImagePressed(context),
                   );
                 },
               ),
               Gap(AppHeight.h30),
               CustomTextFormField(
                 hint: "Animal Price",
-                label: "Animal Category",
-                controller: _mainViewController.animalPriceController,
-                validator: _mainViewController.validateCategoryName,
+                label: "Animal Price",
+                controller: _animalController.priceController,
+                validator: _animalController.validatePrice,
               ),
               Gap(AppHeight.h6),
               CustomTextFormField(
                 hint: "Enter Category Name",
                 label: "Animal Name",
-                controller: _mainViewController.animalCategoryController,
-                validator: _mainViewController.validateCategoryName,
+                controller: _animalController.categoryController,
+                validator: _animalController.validateCategory,
               ),
               Gap(AppHeight.h16),
               CustomButton(
                 text: "Add Animal",
-                onPressed: _mainViewController.goToAddAnimal,
+                onPressed: () => _animalController.onAddPressed(context),
               ),
             ],
           ),

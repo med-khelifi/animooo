@@ -1,3 +1,5 @@
+import 'package:animooo/controllers/animal_controller.dart';
+import 'package:animooo/controllers/category_controller.dart';
 import 'package:animooo/controllers/main_view_controller.dart';
 import 'package:animooo/core/storge/storge_helper.dart';
 import 'package:animooo/services/animal_service.dart';
@@ -33,5 +35,11 @@ void setupInjection() {
   services.registerLazySingleton<StorageHelper>(
     () => StorageHelper(services<FlutterSecureStorage>()),
   );
-  services.registerSingleton<MainViewController>(MainViewController());
+  services.registerLazySingleton<MainViewController>(
+    () => MainViewController(),
+  );
+  services.registerLazySingleton<CategoryController>(
+    () => CategoryController(),
+  );
+  services.registerLazySingleton<AnimalController>(() => AnimalController());
 }

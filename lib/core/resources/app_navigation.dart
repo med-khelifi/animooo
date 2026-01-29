@@ -7,11 +7,8 @@ class AppNavigation {
       GlobalKey<NavigatorState>();
 
   // Push
-  static Future<dynamic>? push(RoutesNames route, {Object? arguments}) {
-    return navigatorKey.currentState?.pushNamed(
-      route.route,
-      arguments: arguments,
-    );
+  static Future<dynamic>? push(RoutesNames route, {Object? arguments}) async {
+    navigatorKey.currentState?.pushNamed(route.route, arguments: arguments);
   }
 
   // Replace current
@@ -19,7 +16,7 @@ class AppNavigation {
     RoutesNames route, {
     Object? arguments,
   }) {
-    return navigatorKey.currentState?.pushReplacementNamed(
+    navigatorKey.currentState?.pushReplacementNamed(
       route.route,
       arguments: arguments,
     );
@@ -27,7 +24,7 @@ class AppNavigation {
 
   // Remove all previous routes
   static Future<dynamic>? pushAndRemoveUntil(RoutesNames route) {
-    return navigatorKey.currentState?.pushNamedAndRemoveUntil(
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
       route.route,
       (route) => false,
     );
